@@ -93,6 +93,8 @@ function sanitizeFields<T extends IncidentInput>(input: T): T {
     rules_violated: sanitizeOpt(input.rules_violated),
     affected_files: sanitizeOpt(input.affected_files),
     bad_code: sanitizeOpt(input.bad_code),
+    tags: sanitizeOpt(input.tags),
+    agent_id: sanitizeOpt(input.agent_id),
   };
 }
 
