@@ -1,5 +1,5 @@
 import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
-import { join, relative, dirname } from "node:path";
+import { join, relative, dirname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import MiniSearch from "minisearch";
 import { log } from "../log.js";
@@ -151,7 +151,11 @@ export function doc(path: string, section?: string): string {
 }
 
 export function fullDoc(path: string): string {
-  const abs = join(CORPUS_DIR, path);
+  const root = resolve(CORPUS_DIR);
+  const abs = resolve(root, path);
+  if (abs !== root && !abs.startsWith(root + sep)) {
+    return `No corpus doc at "${path}".`;
+  }
   if (!existsSync(abs)) return `No corpus doc at "${path}".`;
   return readFileSync(abs, "utf8");
 }

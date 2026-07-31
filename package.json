@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "test": "npm run build && node --test test/*.test.mjs",
     "ingest": "tsx scripts/ingest.ts",
     "mint-key": "tsx scripts/mint-key.ts",
     "incidents": "tsx scripts/incidents.ts",
