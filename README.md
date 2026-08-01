@@ -8,50 +8,70 @@
 </p>
 
 <p align="center">
-  <img src="assets/aries-logo-tagline.png" alt="Aries — Alkanes + Subfrost" width="270" />
+  <img src="assets/aries-logo-tagline.png" alt="Aries — Alkanes + SUBFROST" width="270" />
 </p>
 
-### Make any AI assistant fluent in building on Alkanes&nbsp;+&nbsp;Subfrost
+### Make any AI assistant fluent in building on Alkanes&nbsp;+&nbsp;SUBFROST
 
 [![License](https://img.shields.io/badge/License-MIT-111111.svg)](#license)
 [![Model Context Protocol](https://img.shields.io/badge/Model_Context_Protocol-server-5B50E8.svg)](https://modelcontextprotocol.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Node](https://img.shields.io/badge/Node-%E2%89%A520-339933.svg?logo=node.js&logoColor=white)](https://nodejs.org)
 
-**[Use the hosted Aries API &nbsp;·&nbsp; bragi.build/aries](https://bragi.build/aries)**
+**[Use the hosted Aries API &nbsp;·&nbsp; alkanes.build/aries](https://alkanes.build/aries)**
 
 </div>
 
 ---
 
-Aries is a [Model Context Protocol](https://modelcontextprotocol.io) server that
-gives any MCP-capable assistant — **Claude Code, Claude Desktop, Cursor** — a
-knowledge and live-chain-data layer for the **Alkanes** metaprotocol and the
-**Subfrost** network. Point your assistant at Aries and it can read the protocol
+Aries is the AI-native front door for building on Alkanes and utilizing SUBFROST as a developer.
+
+Concretely: a [Model Context Protocol](https://modelcontextprotocol.io) server
+that gives any MCP-capable assistant — **Claude Code, Claude Desktop, Cursor** —
+a knowledge and live-chain-data layer for the **Alkanes** metaprotocol and the
+**SUBFROST** network. Point your assistant at Aries and it can read the protocol
 docs, query the live chain, and scaffold contracts without leaving the editor.
+
+**The tools are free. Trust is earned.**
 
 There are two ways to use it: the **hosted API** (recommended) and a
 **bring-your-own-key local install**.
+
+## About this repo
+
+This repo is the open baseline Aries began from — the bring-your-own-key distro
+and the frozen baseline corpus. The hosted instance has evolved server-side and
+is the living edition; what you find here is the starting point, not a mirror of
+it. External pull requests are not the contribution path for this repo. Bug
+reports via Issues are genuinely welcome, and knowledge contributions flow
+through the hosted incident loop and the Telegram group, where they are reviewed
+before they enter the living corpus. We would rather have your findings than
+your patches.
 
 ---
 
 ## The hosted API — the living Aries
 
-> ### [Subscribe to hosted Aries &nbsp;·&nbsp; bragi.build/aries](https://bragi.build/aries)
+> ### [Connect to hosted Aries &nbsp;·&nbsp; alkanes.build/aries](https://alkanes.build/aries)
 
-The hosted edition is **live now** and it is the way to get the full Aries. It is
-a **continuously-learning instance**: on top of the baseline docs it carries an
-**ever-growing corpus of real-world lessons** — reviewed incident knowledge
-contributed by every connected agent — that a fresh local clone does not have.
-Connect one URL and your assistant inherits the whole shared brain, which gets
-smarter every day.
+Hosted Aries is **free for all developers**. Nothing here is for sale.
 
-| | |
-| --- | --- |
-| **Living corpus** | Accumulated, reviewed real-world gotchas and fixes — not just static docs. |
-| **Zero setup** | No clone, no build, no key to provision. Connect and go. |
-| **Tiered, managed access** | From a free tier up to production throughput, with rate limits handled for you. |
-| **Always current** | The corpus and tools update server-side. |
+It is a **continuously-learning instance**: on top of the baseline docs it
+carries an **ever-growing corpus of real-world lessons** — reviewed incident
+knowledge contributed by every connected agent — that a fresh local clone does
+not have. Connect one URL and your assistant inherits the whole shared brain,
+which gets smarter as the corpus grows.
+
+### Getting a key
+
+1. Join the Telegram group: **[t.me/+DLc96-DPNJRlZTgx](https://t.me/+DLc96-DPNJRlZTgx)**
+2. DM the key bot: **[@AriesKeyBot](https://t.me/AriesKeyBot?start=claim)**
+3. Press **Start**.
+4. Your key arrives in DMs.
+
+Keys are rate-limited while Aries is in beta — currently **10 requests per
+minute** and **1,000 per day**. Those are the beta numbers, not a commitment to
+any particular limit later.
 
 Prefer to run everything yourself? The open, bring-your-own-key edition in this
 repo is below.
@@ -61,44 +81,47 @@ repo is below.
 Both editions ship the same **21 tools** and the same **75-doc baseline**. The
 difference is the **living corpus** — and who manages the keys.
 
-| | Hosted &nbsp;·&nbsp; [bragi.build/aries](https://bragi.build/aries) | Local &nbsp;·&nbsp; this repo |
+| | Hosted &nbsp;·&nbsp; [alkanes.build/aries](https://alkanes.build/aries) | Local &nbsp;·&nbsp; this repo |
 | --- | --- | --- |
 | All 21 tools | Yes | Yes |
 | 75-doc baseline knowledge | Yes | Yes |
-| Live Subfrost chain data | Yes — managed | Yes — your own key |
+| Live SUBFROST chain data | Yes — managed | Yes — your own key |
 | **Living corpus of real-world lessons** | **Yes — ever-growing** | No |
 | Accumulated incident learning | Yes | No (local store only) |
 | Setup | Connect a URL | Clone, install, build |
-| Subfrost key | Managed for you | You provide |
-| Access | Free to production tiers | Unlimited, local |
+| SUBFROST key | Managed for you | You provide |
+| Cost | Free | Free |
 
 Local gives you a complete, self-contained companion on the **static** baseline.
 Hosted adds the **continuously-learning brain** on top. Start local if you like;
-move to [hosted](https://bragi.build/aries) when you want the living corpus.
+move to [hosted](https://alkanes.build/aries) when you want the living corpus.
 
 ---
 
 ## Run it locally (bring your own key)
 
-Clone this repo and run Aries on your own machine with your **own Subfrost API
+Clone this repo and run Aries on your own machine with your **own SUBFROST API
 key**. You get the full toolset and the complete **75-doc static baseline
 knowledge** — without the hosted instance's accumulated learning.
 
-### Get a Subfrost API key
+### Get a SUBFROST API key
 
-Aries talks to the Subfrost gateway with your key.
+Aries talks to the SUBFROST gateway with your key.
 
-> **[Sign up for a Subfrost API key](https://api.subfrost.io/auth/signup?ref=82D1DE7C)** —
-> sign up with our Subfrost referral link and get **50% off your first month**.
+> **[Sign up for a SUBFROST API key](https://api.subfrost.io/auth/signup?ref=82D1DE7C)** —
+> sign up with our SUBFROST referral link and get **50% off your first month**.
+
+That is a referral link: signing up through it supports Aries Labs at no extra
+cost to you.
 
 ### Quickstart
 
 **Requirements:** [Node.js](https://nodejs.org) >= 20 and a
-[Subfrost API key](https://api.subfrost.io/auth/signup?ref=82D1DE7C) (sign up with
+[SUBFROST API key](https://api.subfrost.io/auth/signup?ref=82D1DE7C) (sign up with
 our referral link for **50% off your first month**).
 
 ```bash
-git clone https://github.com/bitbragi/alkanes-aries.git
+git clone https://github.com/Aries-Labs-HQ/alkanes-aries.git
 cd alkanes-aries
 npm install
 cp .env.example .env        # then set SUBFROST_API_KEY (see below)
@@ -152,8 +175,8 @@ Your assistant now has all 21 Aries tools.
 
 | Layer | Tools |
 | --- | --- |
-| **Knowledge** — a searchable corpus of **75 curated docs**: the Alkanes metaprotocol, the Subfrost JSON-RPC/REST reference, alkanes-rs, tutorials, oracle docs, reference contracts | `aries_search`, `aries_doc`, `aries_full_doc`, `aries_catalog`, `aries_tutorials` |
-| **Chain data** — live, read-only queries against the Subfrost gateway: holdings, contract metadata, bytecode, simulate, frBTC peg + DIESEL status, oracle reads, AMM pools, guarded RPC | `aries_tokens_by_address`, `aries_token`, `aries_contract_meta`, `aries_bytecode`, `aries_simulate`, `aries_frbtc_status`, `aries_diesel_status`, `aries_oracle_read`, `aries_oracle_price`, `aries_pools`, `aries_pool_info`, `aries_rpc` |
+| **Knowledge** — a searchable corpus of **75 curated docs**: the Alkanes metaprotocol, the SUBFROST JSON-RPC/REST reference, alkanes-rs, tutorials, oracle docs, reference contracts | `aries_search`, `aries_doc`, `aries_full_doc`, `aries_catalog`, `aries_tutorials` |
+| **Chain data** — live, read-only queries against the SUBFROST gateway: holdings, contract metadata, bytecode, simulate, frBTC peg + DIESEL status, oracle reads, AMM pools, guarded RPC | `aries_tokens_by_address`, `aries_token`, `aries_contract_meta`, `aries_bytecode`, `aries_simulate`, `aries_frbtc_status`, `aries_diesel_status`, `aries_oracle_read`, `aries_oracle_price`, `aries_pools`, `aries_pool_info`, `aries_rpc` |
 | **Dev** — protocol constants and contract scaffolds, including `orbital` NFTs | `aries_constants`, `aries_scaffold` |
 | **Learning** — a local incident loop that records gotchas to your own machine as you work | `aries_incident_report`, `aries_incident_query` |
 
@@ -214,8 +237,10 @@ is built from `corpus/` at startup.
 
 | | |
 | --- | --- |
-| Hosted, continuously-learning Aries | **[bragi.build/aries](https://bragi.build/aries)** |
-| Subfrost API keys (50% off first month) | **[api.subfrost.io](https://api.subfrost.io/auth/signup?ref=82D1DE7C)** |
+| Hosted, continuously-learning Aries | **[alkanes.build/aries](https://alkanes.build/aries)** |
+| Aries Telegram group | **[t.me/+DLc96-DPNJRlZTgx](https://t.me/+DLc96-DPNJRlZTgx)** |
+| Aries key bot | **[@AriesKeyBot](https://t.me/AriesKeyBot?start=claim)** |
+| SUBFROST API keys (referral, 50% off first month) | **[api.subfrost.io](https://api.subfrost.io/auth/signup?ref=82D1DE7C)** |
 | Model Context Protocol | **[modelcontextprotocol.io](https://modelcontextprotocol.io)** |
 
 ## License
