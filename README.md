@@ -69,6 +69,10 @@ which gets smarter as the corpus grows.
 3. Press **Start**.
 4. Your key arrives in DMs.
 
+Questions are welcome in the group, where **@AriesAskBot** answers
+Alkanes/SUBFROST questions. Keys are self-serve end to end: a `/revoke` command
+lets you revoke your own key at any time.
+
 Keys are rate-limited while Aries is in beta — currently **10 requests per
 minute** and **1,000 per day**. Those are the beta numbers, not a commitment to
 any particular limit later.
@@ -108,17 +112,12 @@ knowledge** — without the hosted instance's accumulated learning.
 
 Aries talks to the SUBFROST gateway with your key.
 
-> **[Sign up for a SUBFROST API key](https://api.subfrost.io/auth/signup?ref=82D1DE7C)** —
-> sign up with our SUBFROST referral link and get **50% off your first month**.
-
-That is a referral link: signing up through it supports Aries Labs at no extra
-cost to you.
+> **[Sign up for a SUBFROST API key](https://api.subfrost.io/auth/signup)**
 
 ### Quickstart
 
 **Requirements:** [Node.js](https://nodejs.org) >= 20 and a
-[SUBFROST API key](https://api.subfrost.io/auth/signup?ref=82D1DE7C) (sign up with
-our referral link for **50% off your first month**).
+[SUBFROST API key](https://api.subfrost.io/auth/signup).
 
 ```bash
 git clone https://github.com/Aries-Labs-HQ/alkanes-aries.git
@@ -240,7 +239,7 @@ is built from `corpus/` at startup.
 | Hosted, continuously-learning Aries | **[alkanes.build/aries](https://alkanes.build/aries)** |
 | Aries Telegram group | **[t.me/+DLc96-DPNJRlZTgx](https://t.me/+DLc96-DPNJRlZTgx)** |
 | Aries key bot | **[@AriesKeyBot](https://t.me/AriesKeyBot?start=claim)** |
-| SUBFROST API keys (referral, 50% off first month) | **[api.subfrost.io](https://api.subfrost.io/auth/signup?ref=82D1DE7C)** |
+| SUBFROST API keys | **[api.subfrost.io](https://api.subfrost.io/auth/signup)** |
 | Model Context Protocol | **[modelcontextprotocol.io](https://modelcontextprotocol.io)** |
 
 ## License
