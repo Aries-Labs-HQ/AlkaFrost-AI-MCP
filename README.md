@@ -1,15 +1,6 @@
 <div align="center">
 
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/aries-wordmark.png" />
-    <img alt="Aries" src="assets/aries-wordmark-ink.png" width="300" />
-  </picture>
-</p>
-
-<p align="center">
-  <img src="assets/aries-logo-tagline.png" alt="Aries — Alkanes + SUBFROST" width="270" />
-</p>
+# AlkaFrost MCP
 
 ### Make any AI assistant fluent in building on Alkanes&nbsp;+&nbsp;SUBFROST
 
@@ -17,135 +8,61 @@
 [![Model Context Protocol](https://img.shields.io/badge/Model_Context_Protocol-server-5B50E8.svg)](https://modelcontextprotocol.io)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Node](https://img.shields.io/badge/Node-%E2%89%A520-339933.svg?logo=node.js&logoColor=white)](https://nodejs.org)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-2ea44f.svg)](CONTRIBUTING.md)
 
-**[Use the hosted Aries API &nbsp;·&nbsp; alkanes.build/aries](https://alkanes.build/aries)**
+**[Get a SUBFROST API key — 50% off your first month](https://api.subfrost.io/auth/signup?ref=82D1DE7C)**
 
 </div>
 
 ---
 
-Aries is the AI-native front door for building on Alkanes and utilizing SUBFROST as a developer.
+AlkaFrost MCP is an open-source [Model Context Protocol](https://modelcontextprotocol.io)
+server that gives any MCP-capable assistant — **Claude Code, Claude Desktop,
+Cursor**, and others — a knowledge and live-chain-data layer for the **Alkanes**
+metaprotocol and the **SUBFROST** network.
 
-Concretely: a [Model Context Protocol](https://modelcontextprotocol.io) server
-that gives any MCP-capable assistant — **Claude Code, Claude Desktop, Cursor** —
-a knowledge and live-chain-data layer for the **Alkanes** metaprotocol and the
-**SUBFROST** network. Point your assistant at Aries and it can read the protocol
-docs, query the live chain, and scaffold contracts without leaving the editor.
+Point your assistant at it and it can read the official docs, query the live
+chain, and scaffold contracts without leaving your editor. It runs entirely on
+your machine with **your own SUBFROST API key** — no accounts, no middleman, no
+hosted dependency.
 
-**The tools are free. Trust is earned.**
-
-There are two ways to use it: the **hosted API** (recommended) and a
-**bring-your-own-key local install**.
-
-## About this repo
-
-This repo is the open baseline Aries began from — the bring-your-own-key distro
-and the frozen baseline corpus. The hosted instance has evolved server-side and
-is the living edition; what you find here is the starting point, not a mirror of
-it. External pull requests are not the contribution path for this repo. Bug
-reports via Issues are genuinely welcome, and knowledge contributions flow
-through the hosted incident loop and the Telegram group, where they are reviewed
-before they enter the living corpus. We would rather have your findings than
-your patches.
+- **20 tools** across docs, chain data, dev scaffolds, and a local learning log
+- **119-doc corpus** built from the official, public SUBFROST docs and alkanes-rs
+- **Read-only by design** — it never signs, broadcasts, or touches your keys
 
 ---
 
-## The hosted API — the living Aries
+## Quickstart
 
-> ### [Connect to hosted Aries &nbsp;·&nbsp; alkanes.build/aries](https://alkanes.build/aries)
+### 1. Get a SUBFROST API key
 
-Hosted Aries is **free for all developers**. Nothing here is for sale.
+AlkaFrost talks to the SUBFROST gateway with your own key.
 
-It is a **continuously-learning instance**: on top of the baseline docs it
-carries an **ever-growing corpus of real-world lessons** — reviewed incident
-knowledge contributed by every connected agent — that a fresh local clone does
-not have. Connect one URL and your assistant inherits the whole shared brain,
-which gets smarter as the corpus grows.
+> **[Sign up for a SUBFROST API key](https://api.subfrost.io/auth/signup?ref=82D1DE7C)** —
+> sign up through our referral link and get **50% off your first month**.
 
-### Getting a key
+It's a referral link: signing up through it also supports this project at no
+extra cost to you.
 
-1. Join the Telegram group: **[t.me/+DLc96-DPNJRlZTgx](https://t.me/+DLc96-DPNJRlZTgx)**
-2. DM the key bot: **[@AriesKeyBot](https://t.me/AriesKeyBot?start=claim)**
-3. Press **Start**.
-4. Your key arrives in DMs.
+### 2. Install
 
-Questions are welcome in the group, where **@AriesAskBot** answers
-Alkanes/SUBFROST questions. Keys are self-serve end to end: a `/revoke` command
-lets you revoke your own key at any time.
-
-Keys are rate-limited while Aries is in beta — currently **10 requests per
-minute** and **1,000 per day**. Those are the beta numbers, not a commitment to
-any particular limit later.
-
-Prefer to run everything yourself? The open, bring-your-own-key edition in this
-repo is below.
-
-## Hosted vs. local
-
-Both editions ship the same **21 tools** and the same **75-doc baseline**. The
-difference is the **living corpus** — and who manages the keys.
-
-| | Hosted &nbsp;·&nbsp; [alkanes.build/aries](https://alkanes.build/aries) | Local &nbsp;·&nbsp; this repo |
-| --- | --- | --- |
-| All 21 tools | Yes | Yes |
-| 75-doc baseline knowledge | Yes | Yes |
-| Live SUBFROST chain data | Yes — managed | Yes — your own key |
-| **Living corpus of real-world lessons** | **Yes — ever-growing** | No |
-| Accumulated incident learning | Yes | No (local store only) |
-| Setup | Connect a URL | Clone, install, build |
-| SUBFROST key | Managed for you | You provide |
-| Cost | Free | Free |
-
-Local gives you a complete, self-contained companion on the **static** baseline.
-Hosted adds the **continuously-learning brain** on top. Start local if you like;
-move to [hosted](https://alkanes.build/aries) when you want the living corpus.
-
----
-
-## Run it locally (bring your own key)
-
-Clone this repo and run Aries on your own machine with your **own SUBFROST API
-key**. You get the full toolset and the complete **75-doc static baseline
-knowledge** — without the hosted instance's accumulated learning.
-
-### Get a SUBFROST API key
-
-Aries talks to the SUBFROST gateway with your key.
-
-> **[Sign up for a SUBFROST API key](https://api.subfrost.io/auth/signup)**
-
-### Quickstart
-
-**Requirements:** [Node.js](https://nodejs.org) >= 20 and a
-[SUBFROST API key](https://api.subfrost.io/auth/signup).
+**Requirements:** [Node.js](https://nodejs.org) >= 20.
 
 ```bash
-git clone https://github.com/Aries-Labs-HQ/alkanes-aries.git
-cd alkanes-aries
+git clone https://github.com/Aries-Labs-HQ/alkanes-subfrost-public-mcp.git
+cd alkanes-subfrost-public-mcp
 npm install
-cp .env.example .env        # then set SUBFROST_API_KEY (see below)
 npm run build
 ```
 
-Set your key in `.env`:
-
-```bash
-SUBFROST_API_KEY=your-key-here
-# optional override:
-# SUBFROST_RPC=https://mainnet.subfrost.io/v4/jsonrpc
-```
-
-The key is sent as the `x-subfrost-api-key` header (never in a URL) and never
-leaves your machine except as that outbound header. `.env` is gitignored.
-
-### Connect your MCP client
+### 3. Connect your MCP client
 
 **Claude Code**
 
 ```bash
-claude mcp add --scope local --transport stdio aries \
+claude mcp add --scope local --transport stdio alkafrost \
   -e SUBFROST_API_KEY=YOUR_KEY \
-  -- node /absolute/path/to/alkanes-aries/dist/index.js
+  -- node /absolute/path/to/alkanes-subfrost-public-mcp/dist/index.js
 ```
 
 Verify with `claude mcp list`, then `/mcp` in a session. (`--` separates Claude's
@@ -157,27 +74,34 @@ variadic and will otherwise swallow the server name.)
 ```json
 {
   "mcpServers": {
-    "aries": {
+    "alkafrost": {
       "command": "node",
-      "args": ["/absolute/path/to/alkanes-aries/dist/index.js"],
+      "args": ["/absolute/path/to/alkanes-subfrost-public-mcp/dist/index.js"],
       "env": { "SUBFROST_API_KEY": "your-key-here" }
     }
   }
 }
 ```
 
-Your assistant now has all 21 Aries tools.
+Your key is sent only as the `x-subfrost-api-key` header to the SUBFROST
+gateway — never in a URL, never anywhere else. You can also put it in a local
+`.env` (copy `.env.example`); `.env` is gitignored.
+
+> **Upgrading from the Aries-branded version?** Tools are now prefixed
+> `alkafrost_` instead of `aries_`, and the tutorials tool was removed with the
+> third-party tutorial docs. Pull, `npm install && npm run build`, and re-add the
+> server under its new name.
 
 ---
 
-## What's inside — 21 tools, four layers
+## What's inside — 20 tools, four layers
 
 | Layer | Tools |
 | --- | --- |
-| **Knowledge** — a searchable corpus of **75 curated docs**: the Alkanes metaprotocol, the SUBFROST JSON-RPC/REST reference, alkanes-rs, tutorials, oracle docs, reference contracts | `aries_search`, `aries_doc`, `aries_full_doc`, `aries_catalog`, `aries_tutorials` |
-| **Chain data** — live, read-only queries against the SUBFROST gateway: holdings, contract metadata, bytecode, simulate, frBTC peg + DIESEL status, oracle reads, AMM pools, guarded RPC | `aries_tokens_by_address`, `aries_token`, `aries_contract_meta`, `aries_bytecode`, `aries_simulate`, `aries_frbtc_status`, `aries_diesel_status`, `aries_oracle_read`, `aries_oracle_price`, `aries_pools`, `aries_pool_info`, `aries_rpc` |
-| **Dev** — protocol constants and contract scaffolds, including `orbital` NFTs | `aries_constants`, `aries_scaffold` |
-| **Learning** — a local incident loop that records gotchas to your own machine as you work | `aries_incident_report`, `aries_incident_query` |
+| **Knowledge** — a searchable corpus of the official SUBFROST docs (protocol, tokens, build guides, JSON-RPC / REST / CLI reference, platform limits), the alkanes-rs README and Orbital reference contract, plus constants and scaffolds | `alkafrost_search`, `alkafrost_doc`, `alkafrost_full_doc`, `alkafrost_catalog` |
+| **Chain data** — live, read-only queries against the SUBFROST gateway with your key: holdings, contract metadata, bytecode, simulate, frBTC peg + DIESEL status, oracle reads, AMM pools, guarded RPC | `alkafrost_tokens_by_address`, `alkafrost_token`, `alkafrost_contract_meta`, `alkafrost_bytecode`, `alkafrost_simulate`, `alkafrost_frbtc_status`, `alkafrost_diesel_status`, `alkafrost_oracle_read`, `alkafrost_oracle_price`, `alkafrost_pools`, `alkafrost_pool_info`, `alkafrost_rpc` |
+| **Dev** — protocol constants and contract scaffolds (`wrap`, `unwrap`, `contract`, `orbital`) | `alkafrost_constants`, `alkafrost_scaffold` |
+| **Learning** — a local incident log: your assistant records gotchas as it works and checks them before the next task. Stored on your machine only. | `alkafrost_incident_report`, `alkafrost_incident_query` |
 
 ### Ask your assistant things like
 
@@ -187,7 +111,7 @@ Your assistant now has all 21 Aries tools.
 >
 > *"Show the AMM pools and a pool's reserves."*
 >
-> *"How do I build a token / oracle / stablecoin / AMM / Orbital?"*
+> *"Which JSON-RPC method gets an alkane's bytecode, and what are the rate limits on my plan?"*
 >
 > *"Scaffold an Orbital NFT contract."*
 
@@ -195,17 +119,15 @@ Your assistant now has all 21 Aries tools.
 
 ## Safety — read-only by design
 
-Aries is **analytics only**. It never signs, broadcasts, or touches wallets or
-keys:
+AlkaFrost is **analytics only**. It never signs, broadcasts, or touches wallets
+or keys:
 
-- The `aries_rpc` passthrough is **allowlisted to read methods** and explicitly
-  blocks broadcast / spend / admin calls.
-- Scaffolds and constants are emitted for **you** to run in your own `alkanes`
-  CLI, where you hold the keys.
-- The local incident loop writes only to your machine and sanitizes secrets,
-  keys, and paths out of any report.
-
-Your keys stay yours. Aries only reads and advises.
+- The `alkafrost_rpc` passthrough is **allowlisted to read methods** and
+  explicitly blocks broadcast / spend / admin calls.
+- Scaffolds and constants are emitted for **you** to run in your own
+  `alkanes-cli`, where you hold the keys.
+- The incident log writes only to your machine and sanitizes secrets, keys, and
+  paths out of every report.
 
 ---
 
@@ -213,33 +135,89 @@ Your keys stay yours. Aries only reads and advises.
 
 | Variable | Purpose |
 | --- | --- |
-| `SUBFROST_API_KEY` | **Required** — auth for the live chain-data tools. |
-| `SUBFROST_RPC` / `SUBFROST_REST` | Optional gateway overrides (default to mainnet JSON-RPC / REST). |
-| `ARIES_INCIDENTS_PATH` | Optional path for your local incident store (default `data/incidents.jsonl`, gitignored). |
+| `SUBFROST_API_KEY` | **Required** for the chain-data tools. Docs and dev tools work without it. |
+| `SUBFROST_RPC` / `SUBFROST_REST` | Optional gateway overrides (default: mainnet JSON-RPC; REST is derived from it). |
+| `ALKAFROST_INCIDENTS_PATH` | Optional path for your local incident log (default `data/incidents.jsonl`, gitignored). |
 
 Logs go to **stderr** only — stdout is the MCP protocol channel. The doc index
 is built from `corpus/` at startup.
+
+### Useful scripts
+
+| Command | What it does |
+| --- | --- |
+| `npm run ingest` | Re-pull the corpus from the official sources (see [Keeping the docs current](#keeping-the-docs-current)). |
+| `npm run incidents` | List your local incident log. `npm run incidents -- show <id>` prints one as markdown, ready to turn into an issue or corpus PR. |
+
+---
+
+## Keeping the docs current
+
+The corpus is generated from **public, official sources only**:
+
+- **[docs.subfrost.io](https://docs.subfrost.io)** — every page listed in the
+  site's `llms.txt` and sitemap, taken from its published markdown.
+- **[alkanes-rs](https://github.com/kungfuflex/alkanes-rs)** — the README and the
+  `alkanes-std-orbital` reference contract.
+- **`corpus/reference/`** — short hand-written references (constants, Orbitals,
+  transaction context, scaffolds), each citing a public source.
+
+Run `npm run ingest` to refresh, then restart your MCP client. Every corpus file
+carries a `source_url` in its frontmatter so you can always check the original.
 
 ## Good to know
 
 - Alkane ids are `{block, tx}` / `block:tx`. frBTC = `32:0`, DIESEL (genesis) =
   `2:0`. Protocol tag is always `1`.
-- Read contract state with `aries_simulate`: the opcode goes in `inputs`
+- Read contract state with `alkafrost_simulate`: the opcode goes in `inputs`
   (e.g. `[103]`), not `data`.
 - **Orbitals** (Alkanes NFTs) are a `Token` with total supply 1 + opcode `1000`
-  for media; read them with `aries_oracle_read`, scaffold one with
-  `aries_scaffold orbital`.
-- Extend the corpus by editing `corpus/` or adding URLs to `scripts/ingest.ts`
-  (HTML cleaned via turndown + jsdom; raw `.md`/`.rs` taken verbatim).
+  for media; read them with `alkafrost_oracle_read`, scaffold one with
+  `alkafrost_scaffold orbital`.
+
+---
+
+## Contributing
+
+Contributions are welcome — this project gets better the more builders use it.
+
+- **Docs** — fix or add corpus content from a public source.
+- **Ingest sources** — point `scripts/ingest.ts` at more official, public docs.
+- **Code & tools** — bug fixes, new read-only tools, better scaffolds.
+- **Bug reports** — [open an issue](https://github.com/Aries-Labs-HQ/alkanes-subfrost-public-mcp/issues/new/choose).
+
+Learned a general Alkanes/SUBFROST gotcha with your local incident log? That's
+a great PR. See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the ground rules.
+
+## Support the project
+
+AlkaFrost MCP is free and MIT-licensed. If it saves you time, you can support
+its upkeep:
+
+- **Sign up for SUBFROST through [our referral link](https://api.subfrost.io/auth/signup?ref=82D1DE7C)**
+  (you get 50% off your first month).
+- **Donate BTC:**
+
+  ```
+  bc1qlq5mccc25823m0yk840l7rtd9srgr0mlc7l6xa
+  ```
+
+Thank you.
+
+## Community
+
+Questions, ideas, or show-and-tell: join the
+**[Telegram group](https://t.me/+DLc96-DPNJRlZTgx)**, or open a
+[GitHub issue](https://github.com/Aries-Labs-HQ/alkanes-subfrost-public-mcp/issues).
 
 ## Links
 
 | | |
 | --- | --- |
-| Hosted, continuously-learning Aries | **[alkanes.build/aries](https://alkanes.build/aries)** |
-| Aries Telegram group | **[t.me/+DLc96-DPNJRlZTgx](https://t.me/+DLc96-DPNJRlZTgx)** |
-| Aries key bot | **[@AriesKeyBot](https://t.me/AriesKeyBot?start=claim)** |
-| SUBFROST API keys | **[api.subfrost.io](https://api.subfrost.io/auth/signup)** |
+| SUBFROST API keys (referral, 50% off first month) | **[api.subfrost.io](https://api.subfrost.io/auth/signup?ref=82D1DE7C)** |
+| SUBFROST docs | **[docs.subfrost.io](https://docs.subfrost.io)** |
+| alkanes-rs | **[github.com/kungfuflex/alkanes-rs](https://github.com/kungfuflex/alkanes-rs)** |
+| Telegram group | **[t.me/+DLc96-DPNJRlZTgx](https://t.me/+DLc96-DPNJRlZTgx)** |
 | Model Context Protocol | **[modelcontextprotocol.io](https://modelcontextprotocol.io)** |
 
 ## License
