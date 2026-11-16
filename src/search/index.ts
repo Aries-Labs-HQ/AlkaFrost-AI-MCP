@@ -141,7 +141,7 @@ export function doc(path: string, section?: string): string {
       .filter((c) => c.heading)
       .map((c) => `- ${c.heading}`)
       .join("\n");
-    return `# ${parts[0].title}\n(source: ${path})\n\nSections:\n${headings || "(single section)"}\n\nCall aries_doc again with a section name to read one.`;
+    return `# ${parts[0].title}\n(source: ${path})\n\nSections:\n${headings || "(single section)"}\n\nCall alkafrost_doc again with a section name to read one.`;
   }
   const want = slug(section);
   const hit = parts.find(
@@ -161,8 +161,9 @@ export function catalog(): Record<string, string[]> {
   const out: Record<string, string[]> = {};
   for (const f of files) {
     const rel = relative(CORPUS_DIR, f).split("\\").join("/");
-    const src = rel.split("/")[0];
-    (out[src] ??= []).push(rel);
+    const group = rel.includes("/") ? rel.slice(0, rel.lastIndexOf("/")) : "misc";
+    (out[group] ??= []).push(rel);
   }
-  return out;
+  for (const k of Object.keys(out)) out[k].sort();
+  return Object.fromEntries(Object.entries(out).sort(([a], [b]) => a.localeCompare(b)));
 }

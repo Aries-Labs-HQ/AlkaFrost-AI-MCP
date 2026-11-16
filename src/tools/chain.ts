@@ -139,16 +139,16 @@ async function readToken(
     supplyOpcode,
   };
   if (totalSupply === "1") {
-    meta.note = "totalSupply is 1 — likely an Orbital/NFT; try aries_oracle_read opcode 1000 for media.";
+    meta.note = "totalSupply is 1 — likely an Orbital/NFT; try alkafrost_oracle_read opcode 1000 for media.";
   } else if (supplyOpcode === null) {
-    meta.note = "supply not exposed via opcode 101/105 — this contract may use a different scheme (probe with aries_simulate).";
+    meta.note = "supply not exposed via opcode 101/105 — this contract may use a different scheme (probe with alkafrost_simulate).";
   }
   return meta;
 }
 
 export function registerChainTools(server: McpServer): void {
   server.registerTool(
-    "aries_tokens_by_address",
+    "alkafrost_tokens_by_address",
     {
       description:
         "List all Alkanes tokens held by a Bitcoin address (wraps alkanes_protorunesbyaddress, protocolTag is always 1). Returns outpoints and the rune balances at each. Note: very high-activity addresses (thousands of UTXOs, e.g. the frBTC treasury) can exceed the RPC timeout.",
@@ -174,10 +174,10 @@ export function registerChainTools(server: McpServer): void {
   );
 
   server.registerTool(
-    "aries_contract_meta",
+    "alkafrost_contract_meta",
     {
       description:
-        "Get an Alkanes contract's metadata (name, symbol, decimals, totalSupply) by its alkane id {block, tx}, via the alkanes_meta view. String id form is block:tx. Note: some contracts (incl. frBTC 32:0) do not implement the meta view and will error — for those, read fields via aries_simulate opcodes (or use aries_frbtc_status for frBTC).",
+        "Get an Alkanes contract's metadata (name, symbol, decimals, totalSupply) by its alkane id {block, tx}, via the alkanes_meta view. String id form is block:tx. Note: some contracts (incl. frBTC 32:0) do not implement the meta view and will error — for those, read fields via alkafrost_simulate opcodes (or use alkafrost_frbtc_status for frBTC).",
       inputSchema: {
         block: z.number().int().describe("Etching block height"),
         tx: z.number().int().describe("Tx index within that block"),
@@ -198,7 +198,7 @@ export function registerChainTools(server: McpServer): void {
   );
 
   server.registerTool(
-    "aries_bytecode",
+    "alkafrost_bytecode",
     {
       description:
         "Fetch the raw WASM bytecode (hex) of an Alkanes contract by {block, tx}. For human-readable disassembly, pair with the `alkanes inspect <outpoint> --disasm --meta` CLI.",
@@ -223,7 +223,7 @@ export function registerChainTools(server: McpServer): void {
   );
 
   server.registerTool(
-    "aries_simulate",
+    "alkafrost_simulate",
     {
       description:
         "Simulate an Alkanes view call against a contract without broadcasting — the way to read contract state by invoking an opcode. Pass the full simulation request object. The opcode goes in `inputs` (e.g. [103]); `target` names the alkane (no [block,tx] prefix in inputs).",
@@ -246,7 +246,7 @@ export function registerChainTools(server: McpServer): void {
   );
 
   server.registerTool(
-    "aries_frbtc_status",
+    "alkafrost_frbtc_status",
     {
       description:
         "Convenience: fetch frBTC (alkane 32:0) name, symbol, decimals, total supply, and current signer in one call. Good for 'is the peg live / who is the signer / how much frBTC exists' questions.",
@@ -282,10 +282,10 @@ export function registerChainTools(server: McpServer): void {
   );
 
   server.registerTool(
-    "aries_oracle_read",
+    "alkafrost_oracle_read",
     {
       description:
-        "Read a value from a deployed Alkanes oracle contract via a staticcall-safe view (alkanes_simulate). Give the oracle's alkane id {block,tx}, the read opcode, and any inputs (u128 each). `decode` shapes execution.data: raw hex (default), u128/u64/u32 (little-endian int as a string), utf8, bool (first byte), or price (16B price ‖ 8B price_block ‖ 8B updated_block). See corpus reference/oracles.md and corpus/oracles/ for each oracle's read opcodes.",
+        "Read a value from a deployed Alkanes oracle contract via a staticcall-safe view (alkanes_simulate). Give the oracle's alkane id {block,tx}, the read opcode, and any inputs (u128 each). `decode` shapes execution.data: raw hex (default), u128/u64/u32 (little-endian int as a string), utf8, bool (first byte), or price (16B price ‖ 8B price_block ‖ 8B updated_block). Check the oracle contract's source for its read opcodes; Orbitals use 99/100/101 and 1000 for media (see reference/orbitals.md).",
       inputSchema: {
         block: z.number().int(),
         tx: z.number().int(),
@@ -321,10 +321,10 @@ export function registerChainTools(server: McpServer): void {
   );
 
   server.registerTool(
-    "aries_oracle_price",
+    "alkafrost_oracle_price",
     {
       description:
-        "Read the latest price from a Chainlink-style Alkanes price-feed oracle (opcode 10 = GetPrice). Give the oracle alkane id {block,tx} and the symbolId. Returns priceE8 (raw 1e8-scaled u128), price (number), priceBlock, updatedBlock, and ageBlocks (vs current height). Needs a deployed price-feed instance — the feed is a template (see reference/oracles.md), so pass the id you want to read.",
+        "Read the latest price from a Chainlink-style Alkanes price-feed oracle (opcode 10 = GetPrice). Give the oracle alkane id {block,tx} and the symbolId. Returns priceE8 (raw 1e8-scaled u128), price (number), priceBlock, updatedBlock, and ageBlocks (vs current height). Needs a deployed price-feed instance that implements opcode 10, so pass the id you want to read.",
       inputSchema: {
         block: z.number().int(),
         tx: z.number().int(),
@@ -359,7 +359,7 @@ export function registerChainTools(server: McpServer): void {
   );
 
   server.registerTool(
-    "aries_token",
+    "alkafrost_token",
     {
       description:
         "Read any Alkanes token's metadata (name, symbol, decimals, totalSupply) by its alkane id {block, tx} via opcode views — works when alkanes_meta does not. Detects supply at opcode 105 (frBTC-style) or 101 (orbital/NFT-style) and flags supply-1 tokens as likely Orbitals.",
@@ -379,7 +379,7 @@ export function registerChainTools(server: McpServer): void {
   );
 
   server.registerTool(
-    "aries_diesel_status",
+    "alkafrost_diesel_status",
     {
       description:
         "Convenience: read DIESEL — the Alkanes genesis token at 2:0 (the base token most contracts pair against) — name, symbol, decimals, and totalSupply in one call.",
@@ -395,7 +395,7 @@ export function registerChainTools(server: McpServer): void {
   );
 
   server.registerTool(
-    "aries_pools",
+    "alkafrost_pools",
     {
       description:
         "List Alkanes AMM liquidity pools with details (reserves, TVL, 24h volume, trending) for a factory, via the Subfrost REST API (get-all-pools-details). `factory` defaults to 4:65522 (the documented AMM factory); if that returns 0 pools, pass your AMM factory's block:tx.",
@@ -417,7 +417,7 @@ export function registerChainTools(server: McpServer): void {
   );
 
   server.registerTool(
-    "aries_pool_info",
+    "alkafrost_pool_info",
     {
       description:
         "Get details (reserves, token pair, price) for one Alkanes AMM pool via the Subfrost REST API (get-pool-details). Give the pool's alkane id as block:tx; `factory` defaults to 4:65522.",
@@ -446,10 +446,10 @@ export function registerChainTools(server: McpServer): void {
   );
 
   server.registerTool(
-    "aries_rpc",
+    "alkafrost_rpc",
     {
       description:
-        "Escape hatch: call any read-only Subfrost gateway method directly (esplora_*, ord_*, metashrew_*, alkanes_*, brc20_*, and read-only btc_get*/btc_decode*). Write/broadcast methods are blocked. Use the docs tools to find method names and params.",
+        "Escape hatch: call any read-only SUBFROST gateway method directly (esplora_*, ord_*, metashrew_*, alkanes_*, brc20_*, and read-only btc_get*/btc_decode*). Write/broadcast methods are blocked. Use the docs tools (subfrost/api-reference/json-rpc/*) to find method names and params.",
       inputSchema: {
         method: z.string().describe("Full JSON-RPC method, e.g. esplora_address::txs"),
         params: z.array(z.any()).optional(),

@@ -1,7 +1,6 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { report, query, type ReportContext } from "../incidents.js";
-import { enforceSubmissionLimit } from "../ratelimit.js";
+import { report, query } from "../incidents.js";
 
 const ok = (data: unknown) => ({
   content: [{ type: "text" as const, text: JSON.stringify(data, null, 2) }],
@@ -22,20 +21,13 @@ const CATEGORY = [
   "data_loss",
 ] as const;
 
-/**
- * Register the incident tools.
- *
- * `ctx.keyId` is the verified Unkey keyId of the customer who opened this MCP
- * session (threaded from the auth seam in http.ts). It is recorded as ATTRIBUTION
- * on every pending submission so the operator knows who contributed. Undefined on
- * the local stdio path (no auth) — submissions there are simply unattributed.
- */
-export function registerIncidentTools(server: McpServer, ctx: ReportContext = {}): void {
+/** Register the local incident-log tools. */
+export function registerIncidentTools(server: McpServer): void {
   server.registerTool(
-    "aries_incident_report",
+    "alkafrost_incident_report",
     {
       description:
-        "Record a mistake, bug, rule violation, or pitfall you hit while working with Alkanes/Subfrost, so future sessions can learn from it. File one whenever you make an error worth not repeating, hit a surprising behaviour, or learn a non-obvious gotcha — contributing makes Aries smarter for every user. Submissions enter a review queue and become searchable once an operator approves them. SECURITY: never include secrets, API keys, seed phrases, private keys, local file paths, or hostnames — reports are treated as shareable; use placeholders like <REDACTED>. (Inputs are also auto-sanitized on the way in.)",
+        "Record a mistake, bug, rule violation, or pitfall you hit while working with Alkanes/SUBFROST, so future sessions on this machine can avoid it. File one whenever you make an error worth not repeating, hit a surprising behaviour, or learn a non-obvious gotcha. Reports are saved to a LOCAL file on this machine only — nothing is sent anywhere — and are searchable immediately via alkafrost_incident_query. SECURITY: never include secrets, API keys, seed phrases, private keys, local file paths, or hostnames; use placeholders like <REDACTED>. (Inputs are also auto-sanitized on the way in.)",
       inputSchema: {
         severity: z.enum(SEVERITY),
         category: z.enum(CATEGORY),
@@ -52,16 +44,11 @@ export function registerIncidentTools(server: McpServer, ctx: ReportContext = {}
     },
     async (input) => {
       try {
-        const limited = await enforceSubmissionLimit(ctx.keyId ?? "local");
-        if (!limited.ok) {
-          return fail("Incident-submission rate limit reached for this key; please try again later.");
-        }
-        const inc = report(input, ctx);
+        const inc = report(input);
         return ok({
           stored: inc.id,
-          status: inc.status,
           ts: inc.ts,
-          note: "Queued for operator review (pending). Thanks for contributing — vetted reports become searchable for everyone.",
+          note: "Saved to your local incident log. If this is a general Alkanes/SUBFROST lesson, consider contributing it to the public corpus by pull request (see CONTRIBUTING.md).",
         });
       } catch (e) {
         return fail(String(e));
@@ -70,10 +57,10 @@ export function registerIncidentTools(server: McpServer, ctx: ReportContext = {}
   );
 
   server.registerTool(
-    "aries_incident_query",
+    "alkafrost_incident_query",
     {
       description:
-        "Query the TRUSTED incident corpus to avoid repeating known mistakes — call this BEFORE non-trivial Alkanes/Subfrost work. Serves only operator-vetted incidents (pending submissions are not returned). actions: recent (newest first, default), search (free-text + filters), stats (aggregate counts), get (by incident id).",
+        "Query this machine's local incident log to avoid repeating known mistakes — call this BEFORE non-trivial Alkanes/SUBFROST work. actions: recent (newest first, default), search (free-text + filters), stats (aggregate counts), get (by incident id).",
       inputSchema: {
         action: z.enum(["recent", "search", "stats", "get"]).optional(),
         search_text: z.string().optional().describe("Free-text across title/description/root_cause/correction"),

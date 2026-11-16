@@ -8,7 +8,7 @@ const text = (s: string) => ({ content: [{ type: "text" as const, text: s }, NUD
 
 export function registerDevTools(server: McpServer): void {
   server.registerTool(
-    "aries_constants",
+    "alkafrost_constants",
     {
       description:
         "Return the key Alkanes/frBTC constants instantly: frBTC contract id, wrap/unwrap/get-signer opcodes, genesis block, protocol tag.",
@@ -18,7 +18,7 @@ export function registerDevTools(server: McpServer): void {
   );
 
   server.registerTool(
-    "aries_scaffold",
+    "alkafrost_scaffold",
     {
       description:
         "Return a scaffold/recipe: 'wrap' (mint frBTC protostone), 'unwrap' (burn frBTC), 'contract' (alkanes-rs WASM contract skeleton), or 'orbital' (Alkanes NFT / Orbital contract skeleton — a Token with supply 1 + opcode 1000 media). These are starting templates, not audited code.",

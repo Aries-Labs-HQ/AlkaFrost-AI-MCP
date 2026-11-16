@@ -1,26 +1,25 @@
-// Incident-learning store with a trust quarantine.
+// Local incident log — the user's own record of pitfalls and gotchas.
 //
-// Collection is DECOUPLED from trust. New submissions land in a PENDING queue,
-// unvetted, carrying attribution (submitting keyId + agent_id + timestamp). An
-// operator reviews them (scripts/incidents.ts) and promotes the good ones into
-// the TRUSTED corpus. Only the TRUSTED corpus is served by aries_incident_query.
+// Reports are appended to ONE local JSONL file on the user's machine and are
+// queryable immediately. Nothing is sent anywhere. Every write is sanitized of
+// obvious secrets/keys/paths so a report is safe to paste into a public issue or
+// pull request if the user chooses to contribute it.
 //
-// Both stores are append-only JSONL under the persistent data dir (ARIES_DATA_DIR,
-// bind-mounted to /data in prod). Reports are sanitized of obvious secrets/paths
-// on EVERY write path (submission + seed import), so the corpus is safe to share.
-import { appendFileSync, readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+// Store: $ALKAFROST_INCIDENTS_PATH, default <repo>/data/incidents.jsonl (gitignored).
+// Older versions of this repo wrote data/incidents-pending.jsonl and
+// data/incidents-trusted.jsonl; those are still read (never written) so existing
+// local reports keep showing up.
+import { appendFileSync, readFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 // dist/incidents.js -> repo root is one level up
 const ROOT = join(__dirname, "..");
+const DATA_DIR = join(ROOT, "data");
 
-// Persistent data dir. In prod ARIES_DATA_DIR=/data (a bind-mount); locally it
-// falls back to the repo's gitignored data/ dir so stdio dev is unchanged.
-const DATA_DIR = process.env.ARIES_DATA_DIR ?? join(ROOT, "data");
-const TRUSTED = process.env.ARIES_TRUSTED_PATH ?? join(DATA_DIR, "incidents-trusted.jsonl");
-const PENDING = process.env.ARIES_PENDING_PATH ?? join(DATA_DIR, "incidents-pending.jsonl");
+const STORE = process.env.ALKAFROST_INCIDENTS_PATH ?? join(DATA_DIR, "incidents.jsonl");
+const LEGACY = [join(DATA_DIR, "incidents-trusted.jsonl"), join(DATA_DIR, "incidents-pending.jsonl")];
 
 export type Severity = "critical" | "high" | "medium" | "low" | "info";
 export type Category =
@@ -31,7 +30,6 @@ export type Category =
   | "misunderstanding"
   | "performance"
   | "data_loss";
-export type Status = "pending" | "trusted";
 
 export interface IncidentInput {
   severity: Severity;
@@ -50,22 +48,13 @@ export interface IncidentInput {
 export interface Incident extends IncidentInput {
   id: string;
   ts: number; // unix ms
-  status: Status;
-  key_id?: string; // submitting Unkey keyId (attribution); absent for local/stdio + seed
-  source?: string; // provenance, e.g. "submission" | "seed:dev"
-}
-
-/** Attribution context threaded from the auth seam down to a submission. */
-export interface ReportContext {
-  keyId?: string;
 }
 
 const SECRET_KV =
   /\b([A-Za-z0-9_]*(?:API[_-]?KEY|SECRET|TOKEN|PASSWORD|PASSWD|SEED|MNEMONIC|PRIV(?:ATE)?[_-]?KEY)[A-Za-z0-9_]*)\s*[:=]\s*["']?[^\s"',]+["']?/gi;
 const USER_PATH = /([A-Za-z]:\\Users\\|\/Users\/|\/home\/|\/root\/)[^\s"':,;)]+/g;
 
-/** Best-effort scrub of credentials / local paths before storage. Reports are
- *  treated as shareable — never persist secrets, keys, seed phrases, or paths. */
+/** Best-effort scrub of credentials / local paths before storage. */
 export function sanitize(text: string): string {
   let t = text;
   const key = process.env.SUBFROST_API_KEY;
@@ -80,20 +69,6 @@ export function sanitize(text: string): string {
 
 function sanitizeOpt(text?: string): string | undefined {
   return text === undefined || text === "" ? text : sanitize(text);
-}
-
-/** Apply sanitize() to every free-text field of an incident-shaped object. */
-function sanitizeFields<T extends IncidentInput>(input: T): T {
-  return {
-    ...input,
-    title: sanitize(input.title),
-    description: sanitize(input.description),
-    root_cause: sanitize(input.root_cause),
-    correction: sanitize(input.correction),
-    rules_violated: sanitizeOpt(input.rules_violated),
-    affected_files: sanitizeOpt(input.affected_files),
-    bad_code: sanitizeOpt(input.bad_code),
-  };
 }
 
 function loadFile(path: string): Incident[] {
@@ -111,68 +86,48 @@ function loadFile(path: string): Incident[] {
   return out;
 }
 
-function appendLine(path: string, inc: Incident): void {
-  mkdirSync(dirname(path), { recursive: true });
-  appendFileSync(path, JSON.stringify(inc) + "\n", "utf8");
+/** Every local incident (current store + any legacy files), de-duplicated by id. */
+export function loadAll(): Incident[] {
+  const seen = new Set<string>();
+  const out: Incident[] = [];
+  for (const path of [STORE, ...LEGACY]) {
+    for (const inc of loadFile(path)) {
+      if (seen.has(inc.id)) continue;
+      seen.add(inc.id);
+      out.push(inc);
+    }
+  }
+  return out;
 }
 
-/** Rewrite a store in full (used by promote/reject, which remove a line). */
-function writeAll(path: string, incidents: Incident[]): void {
-  mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, incidents.map((i) => JSON.stringify(i)).join("\n") + (incidents.length ? "\n" : ""), "utf8");
-}
-
-function loadTrusted(): Incident[] {
-  return loadFile(TRUSTED);
-}
-function loadPending(): Incident[] {
-  return loadFile(PENDING);
-}
-
-/** Trusted-corpus size (what aries_incident_query serves). */
 export function incidentCount(): number {
-  return loadTrusted().length;
-}
-/** Pending-queue size (awaiting operator review). */
-export function pendingCount(): number {
-  return loadPending().length;
+  return loadAll().length;
 }
 
-export function storePaths(): { dataDir: string; trusted: string; pending: string } {
-  return { dataDir: DATA_DIR, trusted: TRUSTED, pending: PENDING };
+export function storePath(): string {
+  return STORE;
 }
 
-function nextId(): string {
+/** Record a new incident in the local store. Sanitized on the way in. */
+export function report(input: IncidentInput): Incident {
   const ts = Date.now();
-  const seq = loadTrusted().length + loadPending().length + 1;
-  return `INC-${ts.toString(36)}-${seq.toString(36)}`;
-}
-
-/**
- * File a new incident. ALWAYS lands in the PENDING queue (status=pending) with
- * attribution — never directly into the trusted corpus. Sanitized on the way in.
- */
-export function report(input: IncidentInput, ctx: ReportContext = {}): Incident {
-  const clean = sanitizeFields(input);
   const incident: Incident = {
-    id: nextId(),
-    ts: Date.now(),
-    status: "pending",
-    key_id: ctx.keyId,
-    source: "submission",
-    severity: clean.severity,
-    category: clean.category,
-    title: clean.title,
-    description: clean.description,
-    root_cause: clean.root_cause,
-    correction: clean.correction,
-    rules_violated: clean.rules_violated,
-    affected_files: clean.affected_files,
-    bad_code: clean.bad_code,
-    tags: clean.tags,
-    agent_id: clean.agent_id,
+    id: `INC-${ts.toString(36)}-${(incidentCount() + 1).toString(36)}`,
+    ts,
+    severity: input.severity,
+    category: input.category,
+    title: sanitize(input.title),
+    description: sanitize(input.description),
+    root_cause: sanitize(input.root_cause),
+    correction: sanitize(input.correction),
+    rules_violated: sanitizeOpt(input.rules_violated),
+    affected_files: sanitizeOpt(input.affected_files),
+    bad_code: sanitizeOpt(input.bad_code),
+    tags: input.tags,
+    agent_id: input.agent_id,
   };
-  appendLine(PENDING, incident);
+  mkdirSync(dirname(STORE), { recursive: true });
+  appendFileSync(STORE, JSON.stringify(incident) + "\n", "utf8");
   return incident;
 }
 
@@ -189,9 +144,9 @@ export interface QueryOpts {
 
 const SEV_RANK: Record<Severity, number> = { info: 0, low: 1, medium: 2, high: 3, critical: 4 };
 
-/** Query the TRUSTED corpus only. Pending submissions are never served here. */
+/** Query the local incident log. */
 export function query(opts: QueryOpts): unknown {
-  const all = loadTrusted();
+  const all = loadAll();
   const action = opts.action ?? "recent";
 
   if (action === "get") {
@@ -232,85 +187,4 @@ export function query(opts: QueryOpts): unknown {
   const limit = Math.min(opts.limit ?? 10, 50);
   results = results.slice().sort((a, b) => b.ts - a.ts).slice(0, limit);
   return { count: results.length, total: all.length, incidents: results };
-}
-
-// ── Operator review API (used by scripts/incidents.ts; never the public endpoint) ──
-
-/** All pending submissions, newest first, WITH attribution for the operator. */
-export function listPending(): Incident[] {
-  return loadPending().slice().sort((a, b) => b.ts - a.ts);
-}
-
-/** All trusted incidents, newest first. */
-export function listTrusted(): Incident[] {
-  return loadTrusted().slice().sort((a, b) => b.ts - a.ts);
-}
-
-/** Promote one pending incident into the trusted corpus. */
-export function promote(id: string): { ok: boolean; incident?: Incident; error?: string } {
-  const pending = loadPending();
-  const idx = pending.findIndex((i) => i.id === id);
-  if (idx < 0) return { ok: false, error: `No pending incident ${id}` };
-  const [inc] = pending.splice(idx, 1);
-  const promoted: Incident = { ...inc, status: "trusted" };
-  appendLine(TRUSTED, promoted);
-  writeAll(PENDING, pending);
-  return { ok: true, incident: promoted };
-}
-
-/** Drop one pending incident without trusting it. */
-export function reject(id: string): { ok: boolean; error?: string } {
-  const pending = loadPending();
-  const next = pending.filter((i) => i.id !== id);
-  if (next.length === pending.length) return { ok: false, error: `No pending incident ${id}` };
-  writeAll(PENDING, next);
-  return { ok: true };
-}
-
-/** Batch-promote the entire pending queue (operator trusts a whole session). */
-export function promoteAll(): { promoted: number } {
-  const pending = loadPending();
-  if (!pending.length) return { promoted: 0 };
-  for (const inc of pending) appendLine(TRUSTED, { ...inc, status: "trusted" });
-  writeAll(PENDING, []);
-  return { promoted: pending.length };
-}
-
-/**
- * Import already-vetted incidents straight into the TRUSTED corpus (seeding).
- * Re-sanitizes every field, stamps provenance, preserves id/ts when present.
- * Returns the number imported.
- */
-export function importTrusted(raw: Array<Partial<Incident> & IncidentInput>, source = "seed:dev"): number {
-  const existing = loadTrusted();
-  const seen = new Set(existing.map((i) => i.id));
-  let n = 0;
-  for (const item of raw) {
-    const clean = sanitizeFields(item);
-    const ts = typeof item.ts === "number" ? item.ts : Date.now();
-    const id = item.id ?? `INC-${ts.toString(36)}-seed${existing.length + n + 1}`;
-    if (seen.has(id)) continue; // idempotent re-seed
-    seen.add(id);
-    const inc: Incident = {
-      id,
-      ts,
-      status: "trusted",
-      source: item.source ?? source,
-      key_id: item.key_id,
-      severity: clean.severity,
-      category: clean.category,
-      title: clean.title,
-      description: clean.description,
-      root_cause: clean.root_cause,
-      correction: clean.correction,
-      rules_violated: clean.rules_violated,
-      affected_files: clean.affected_files,
-      bad_code: clean.bad_code,
-      tags: clean.tags,
-      agent_id: clean.agent_id,
-    };
-    appendLine(TRUSTED, inc);
-    n++;
-  }
-  return n;
 }

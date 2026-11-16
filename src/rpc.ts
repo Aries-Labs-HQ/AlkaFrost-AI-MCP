@@ -1,5 +1,4 @@
 import { log } from "./log.js";
-import { assertSubfrostBudget } from "./ratelimit.js";
 
 const ENDPOINT =
   process.env.SUBFROST_RPC ?? "https://mainnet.subfrost.io/v4/jsonrpc";
@@ -25,9 +24,6 @@ export async function rpc<T = unknown>(
   params: unknown[] = [],
   timeoutMs = 20_000,
 ): Promise<T> {
-  // Global self-throttle: count this real outbound Subfrost call against the
-  // shared budget BEFORE spending it. Throws CapacityError at the ceiling.
-  await assertSubfrostBudget();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -74,8 +70,6 @@ export async function restPost<T = unknown>(
   body: unknown,
   timeoutMs = 20_000,
 ): Promise<T> {
-  // Global self-throttle (same shared bucket as rpc()): REST hits Subfrost too.
-  await assertSubfrostBudget();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
