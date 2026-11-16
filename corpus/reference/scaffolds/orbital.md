@@ -1,3 +1,9 @@
+---
+title: "Scaffold: Orbital (Alkanes NFT)"
+source: reference
+source_url: https://github.com/kungfuflex/alkanes-rs/tree/main/crates/alkanes-std-orbital
+---
+
 # Scaffold: Orbital (Alkanes NFT)
 
 A minimal Orbital is an Alkanes `Token` with total supply **1** plus opcode
@@ -92,12 +98,10 @@ declare_alkane! {
 ```
 
 Build: `cargo build --target wasm32-unknown-unknown --release`
-Deploy: `yarn oyl alkane new-contract -c ./target/.../my_orbital.wasm -data 1,0 -p signet`
+Deploy with `alkanes-cli` — see `subfrost/build/interacting-via-cli.md` and
+`subfrost/api-reference/cli-sdk/alkanes.md` in the corpus.
 
-For collections (10k mints, traits, swaps), see corpus/orbitals/collection-contract.md
-and corpus/orbitals/nft-contract.md. For on-chain SVG rendering, see
-corpus/orbitals/svg-generator.md. Full reference + migration notes:
-`aries_doc reference/orbitals.md`.
+Full reference: `alkafrost_doc reference/orbitals.md`. Canonical source:
+`alkanes-rs/std-orbital.md`.
 
-This is a starting template, not audited code — review with the audit /
-security-issues tutorials before mainnet.
+This is a starting template, not audited code — get it reviewed before mainnet.

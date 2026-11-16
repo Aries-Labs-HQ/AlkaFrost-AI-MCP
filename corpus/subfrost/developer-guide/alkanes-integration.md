@@ -1,0 +1,225 @@
+---
+title: Alkanes Integration
+source: subfrost
+source_url: https://docs.subfrost.io/developer-guide/alkanes-integration
+---
+
+# Alkanes Integration
+
+> The Alkanes CLI (`alkanes-cli`) is the primary command-line tool for interacting with the Alkanes metaprotocol on Bitcoin. It provides commands for wallet management, token operations, contract deployment, and querying the network.
+
+## Installation
+
+Install from the alkanes-rs repository:
+
+```bash
+git clone https://github.com/kungfuflex/alkanes-rs
+cd alkanes-rs
+cargo build --release
+```
+
+The binary will be available at `target/release/alkanes-cli`.
+
+## Global Options
+
+All commands support these global options:
+
+| Option | Description |
+|--------|-------------|
+| `--wallet-file <PATH>` | Path to wallet file |
+| `--passphrase <PHRASE>` | Wallet passphrase for signing |
+| `--wallet-address <ADDR>` | Watch-only mode (read-only) |
+| `--jsonrpc-url <URL>` | Custom JSON-RPC endpoint |
+| `--provider <PROVIDER>` | Network: `regtest`, `signet`, `mainnet` |
+| `--frbtc-address <ADDR>` | Override frBTC contract address |
+
+## Wallet Commands
+
+### Create a Wallet
+
+```bash
+alkanes-cli wallet create
+```
+
+Creates a new wallet with a 12-word mnemonic phrase. Store this phrase securely.
+
+### List Addresses
+
+```bash
+alkanes-cli wallet addresses p2tr:0-5
+```
+
+Shows wallet addresses. Pass one or more positional range specs of the form `TYPE:START-END` (for example `p2tr:0-5` or `p2sh:0-500`) to choose which addresses to display. With no range, it shows the first 5 addresses of each type for the current network.
+
+### Check Balance
+
+```bash
+alkanes-cli wallet balance
+```
+
+Displays BTC and token balances for your wallet.
+
+### List UTXOs
+
+```bash
+alkanes-cli wallet utxos
+```
+
+Lists all unspent transaction outputs in your wallet.
+
+## Alkanes Operations
+
+### Wrap BTC to frBTC
+
+```bash
+alkanes-cli alkanes wrap-btc <AMOUNT> \
+  --to <RECIPIENT_ADDRESS> \
+  --from <YOUR_ADDRESS> \
+  --change <CHANGE_ADDRESS> \
+  --fee-rate <SAT_PER_VB> \
+  -y
+```
+
+Wraps native BTC to frBTC tokens. `<AMOUNT>` is an integer amount in satoshis (the example below wraps 1000000 sats = 0.01 BTC), and `--to` is required. The `-y` flag auto-confirms the transaction.
+
+**Example:**
+```bash
+alkanes-cli alkanes wrap-btc 1000000 \
+  --to bc1p... \
+  --from bc1q... \
+  --change bc1q... \
+  --fee-rate 10 \
+  -y
+```
+
+### Check Token Balance
+
+```bash
+alkanes-cli alkanes getbalance <ADDRESS>
+```
+
+### View Pending Unwraps
+
+```bash
+alkanes-cli alkanes unwrap --block-tag latest
+```
+
+Shows pending frBTC unwrap requests waiting to be processed.
+
+### Execute Custom Transactions
+
+```bash
+alkanes-cli alkanes execute <PROTOSTONES> \
+  --inputs <REQUIREMENTS> \
+  --to <ADDRESSES> \
+  -y
+```
+
+For advanced users building custom Alkanes transactions. Protostone specs are positional arguments, not a flag.
+
+**Input format:**
+- `B:amount` — Bitcoin amount in sats
+- `BLOCK:TX:amount` — Specific token amount
+
+### Inspect Contracts
+
+```bash
+alkanes-cli alkanes inspect <OUTPOINT> --disasm --meta
+```
+
+Disassemble and inspect contract bytecode.
+
+### Simulate Transactions
+
+```bash
+alkanes-cli alkanes simulate 32:0:103
+```
+
+Simulate a contract call without broadcasting anything. The argument is `BLOCK:TX:OPCODE[:ARG...]`; this example calls opcode 103 (Get Signer, see the table below) on the frBTC contract `{32, 0}`.
+
+## Bitcoin RPC Commands
+
+Direct Bitcoin Core RPC access:
+
+```bash
+# Get block count
+alkanes-cli bitcoind getblockcount
+
+# Get raw transaction
+alkanes-cli bitcoind getrawtransaction <TXID>
+
+# Decode transaction
+alkanes-cli bitcoind decoderawtransaction <TX_HEX>
+
+# Send transaction
+alkanes-cli bitcoind sendrawtransaction <TX_HEX>
+```
+
+## Esplora Commands
+
+Query Esplora API:
+
+```bash
+# Get address info
+alkanes-cli esplora address <ADDRESS>
+
+# Get address UTXOs
+alkanes-cli esplora address-utxo <ADDRESS>
+
+# Get transaction
+alkanes-cli esplora tx <TXID>
+
+# Fee estimates
+alkanes-cli esplora fee-estimates
+```
+
+## Transaction Options
+
+### Fee Rate
+
+Set custom fee rate in sat/vB:
+
+```bash
+--fee-rate 15
+```
+
+### Broadcasting Methods
+
+| Option | Description |
+|--------|-------------|
+| Default | Standard mempool broadcast |
+| `--use-slipstream` | MARA Slipstream (bypasses mempool) |
+| `--use-rebar` | Rebar Shield (private relay with MEV protection) |
+| `--mine` | Mine immediately (regtest only) |
+
+### Auto-confirm
+
+Skip confirmation prompts:
+
+```bash
+-y, --auto-confirm
+```
+
+## Key Constants
+
+| Constant | Value | Description |
+|----------|-------|-------------|
+| frBTC Contract | `{32, 0}` | Block 32, Transaction 0 |
+| Wrap Opcode | `77` | frBTC exchange function |
+| Unwrap Opcode | `78` | frBTC unwrap function |
+| Get Signer Opcode | `103` | Query signer public key |
+| Genesis Block | `880000` | Mainnet genesis |
+
+## Getting Help
+
+```bash
+alkanes-cli --help
+alkanes-cli <COMMAND> --help
+```
+
+For issues and contributions: [kungfuflex/alkanes-rs](https://github.com/kungfuflex/alkanes-rs)
+
+## See Also
+
+- [frBTC on Alkanes](./wrapping-frBTC) — Wrapping and unwrapping frBTC
+- [Alkanes Metaprotocol](../key-components/alkanes) — Protocol overview

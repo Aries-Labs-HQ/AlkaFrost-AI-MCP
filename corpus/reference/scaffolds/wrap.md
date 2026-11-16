@@ -31,4 +31,4 @@ alkanes alkanes wrap-btc 0.01 \
   --fee-rate 10 -y
 ```
 
-Signing/broadcast is intentionally out of scope for Aries — keep keys in the CLI.
+Signing/broadcast is intentionally out of scope for AlkaFrost MCP — keep keys in the CLI.
