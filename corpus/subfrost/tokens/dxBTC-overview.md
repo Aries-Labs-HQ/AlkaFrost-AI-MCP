@@ -1,0 +1,51 @@
+---
+title: dxBTC Overview
+source: subfrost
+source_url: https://docs.subfrost.io/tokens/dxBTC-overview
+---
+
+# dxBTC Overview
+
+> dxBTC is a planned yield-bearing BTC token: deposits will be wrapped to frBTC and deployed into market-neutral strategies, with yield paid in BTC. Not live yet.
+
+:::info Planned
+dxBTC is planned and not live. It cannot be minted or bought today.
+:::
+
+## Yield-bearing BTC of Bitcoin L1
+
+`dxBTC` is a planned yield-generating synthetic Bitcoin asset, to be built on top of the SUBFROST ecosystem. It is designed to provide Bitcoin holders with a way to earn a sustainable yield on their assets in a trust-minimized and decentralized manner.
+
+In practice, this will be the simplest possible way for a user to earn BTC yield with their BTC:
+
+1. User will sign a **single** Bitcoin transaction to stake their native **BTC** in the SUBFROST yield vault. The user will receive `dxBTC`, which will represent their staked BTC.
+2. Their BTC will be wrapped to `frBTC` and deployed into market-neutral LP strategies and over-collateralized lending protocols across Bitcoin L1, earning yield regardless of BTC price movement.
+3. This yield will then be passed back to stakers in the form of native **BTC**, which the user will be able to check at any time.
+4. User will sign a **single** Bitcoin transaction to unstake their native **BTC** and burn their `dxBTC`.
+![dxBTC diagram](../Diagrams/dxBTC_example.png)
+
+These yield vaults will be deployed across Alkanes, Arch, BRC 2.0, and any other programmable ecosystem that launches on Bitcoin mainnet.
+
+This economic model is **already proven** on other blockchains like Ethereum and Solana and can be *dramatically simplified* for the end user.
+
+## How does it work? `frBTC` + Yield
+
+At its core, `dxBTC` will be an alkane that locks up `frBTC`. SUBFROST governance will then act as a decentralized strategist, deploying the locked `frBTC` into various conservative yield-generating strategies.
+
+These strategies may include:
+
+*   **Providing liquidity to decentralized exchanges:** The `frBTC` can be used to provide liquidity to delta-neutral LPs like `frBTC`/`wBTC` or other trading pairs on decentralized exchanges, earning trading fees.
+*   **Lending:** The `frBTC` can be lent out on decentralized, over-collateralized lending platforms to earn interest.
+*   **Cross-chain Strategies:** The `frBTC` can be trustlessly bridged to other blockchain ecosystems, like Hyperliquid, to participate in yield farming opportunities.
+
+The profits generated from these strategies will then be distributed back to the `dxBTC` holders, allowing them to earn a passive income while maintaining full exposure to their BTC. This will provide a way for Bitcoin holders to put their assets to work without having to sell them or trust a centralized custodian.
+
+## The Role of SUBFROST Governance
+
+**SUBFROST governance** will play a crucial role in `dxBTC`. The governance will be responsible for:
+
+*   **Selecting and managing yield-generating strategies:** The governance will research, vet, and select the most promising and secure yield-generating strategies for the locked `frBTC`.
+*   **Monitoring and rebalancing:** The governance will continuously monitor the performance of the selected strategies and rebalance the portfolio as needed to optimize yield and manage risk.
+*   **Distributing profits:** The governance will ensure that the profits generated from the yield-generating strategies are distributed fairly to all `dxBTC` holders.
+
+By combining the security and decentralization of SUBFROST with the yield-generating potential of DeFi, `dxBTC` is intended to provide a powerful new tool for Bitcoin holders to grow their wealth.

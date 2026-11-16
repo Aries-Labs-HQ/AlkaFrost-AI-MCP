@@ -1,0 +1,67 @@
+---
+title: Glossary
+source: subfrost
+source_url: https://docs.subfrost.io/reference/glossary
+---
+
+# Glossary
+
+> Short definitions for the terms used across the SUBFROST documentation.
+
+## Protocol and tokens
+
+*   **SUBFROST:** A decentralized custodian for Bitcoin. It moves BTC into a programmable on-chain form and back, without a single company holding the coins.
+*   **Alkanes:** A smart-contract metaprotocol built on the Bitcoin blockchain. SUBFROST is built on it.
+*   **Metaprotocol:** A protocol built on top of another protocol. Alkanes is a metaprotocol on Bitcoin.
+*   **Protorunes:** The standard Alkanes is compatible with. Alkanes is a protorunes-compatible protocol, not a fork of Runes.
+*   **Protostone:** The unit of Alkanes execution encoded in a Bitcoin transaction. A transaction can carry several protostones (for example transfer, then mint, then call).
+*   **Cellpack:** The message an Alkanes call carries, a list beginning with the target contract and an opcode, followed by inputs.
+*   **Alkane ID:** A contract's address, a `[block, tx]` pair identifying where it was deployed.
+*   **View function:** A read-only call that runs against indexer state and costs nothing, used to query balances, simulate calls, or read a contract's ABI.
+*   **Opcode:** A numbered method on a contract. A call names the target Alkane ID and an opcode.
+*   **Runestone:** A message embedded in an `OP_RETURN` output of a Bitcoin transaction.
+*   **`OP_RETURN`:** A Bitcoin script opcode that embeds a small amount of data in a transaction.
+*   **BRC2.0:** An EVM-compatible smart-contract layer on Bitcoin (also called brc20-prog) that runs Solidity contracts whose state is derived from Bitcoin transactions.
+*   **`frBTC`:** Bitcoin-backed value inside Alkanes, pegged 1:1 to BTC and usable across Bitcoin DeFi.
+*   **`FR-BTC`:** The BRC2.0 deployment of frBTC.
+*   **DIESEL:** The protocol's fair-launch native token. Every Bitcoin block emits the same amount of DIESEL as it emits new bitcoin, halving alongside Bitcoin.
+*   **FIRE:** FIRE is the Alkanes governance token. It is also the token behind the FIRE vault, tied to bond mechanics priced against the protocol treasury through the oracle.
+*   **`dxBTC`:** A yield-bearing synthetic Bitcoin asset (planned).
+*   **`FUEL`:** FUEL is the SUBFROST protocol governance token (planned). Not to be confused with lowercase fuel, below.
+*   **fuel:** The compute budget an Alkanes contract call is allowed to spend, comparable to gas on Ethereum in what it measures. Unlike gas, it is free: each block's fixed fuel budget is shared, by size, among the transactions that actually run contracts, and nothing is charged against it. Network fees are the ordinary Bitcoin miner fee, in native BTC.
+*   **AMM:** Automated Market Maker. A decentralized exchange that prices assets with a formula rather than an order book.
+*   **Wrap / Unwrap:** Wrapping locks BTC and mints frBTC 1:1; unwrapping burns frBTC and releases the underlying BTC through the signer group.
+*   **Oracle:** A decentralized group that brings outside data (mainly prices) on-chain by agreement, so no single party dictates the value.
+*   **Signer set:** The group of participants that collectively custodies the BTC backing frBTC through threshold signing.
+*   **PSBT:** Partially Signed Bitcoin Transaction. The format a wallet signs when authorizing a transaction.
+
+## Alkane IDs
+
+An Alkane ID is written `block:tx`. For example, frBTC is `32:0`, which appears as `[32, 0]` in calldata arrays and as `{block: 32n, tx: 0n}` in protostone JSON.
+
+| Token | Mainnet Alkane ID |
+| --- | --- |
+| `frBTC` | `32:0` |
+| DIESEL | `2:0` |
+| frUSD | `4:1776` |
+
+## Cryptography
+
+*   **Schnorr signature:** The signature scheme Bitcoin adopted in Taproot (BIP-340), over the secp256k1 curve. Its linearity lets partial signatures combine into one.
+*   **FROST:** Flexible Round-Optimized Schnorr Threshold. A threshold scheme letting a dynamic set of signers produce one Schnorr signature without any signer holding the full private key.
+*   **ROAST:** Robust Asynchronous Schnorr Threshold. A robust, asynchronous optimization of FROST that keeps signing moving when some participants are slow or offline.
+*   **DKG:** Distributed Key Generation. A ceremony where participants jointly produce one group public key while each holds only a secret share of the private key.
+*   **Keystore:** An encrypted file (or hardware-backed store) that holds a user's sensitive cryptographic material.
+*   **AES-256-GCM:** A modern authenticated encryption cipher providing both confidentiality and integrity.
+*   **PBKDF2:** A key-derivation function that stretches a passphrase so guessing it offline is expensive.
+*   **ASCII armoring:** Encoding binary data as human-readable text so it is easy to store and move.
+
+## Indexing
+
+*   **metashrew:** The base indexer that runs the Alkanes WASM against Bitcoin block data and answers view functions. It is the source of truth for on-chain state.
+*   **subshrew:** The v10 indexer that runs the metashrew runtime against TiKV, decoupling the view layer from indexing.
+*   **rockshrew-mono:** A single-binary way to run the metashrew runtime with a local database.
+*   **TiKV:** A distributed key-value store used as the shared state backend for the v10 indexer.
+*   **ESPO:** A secondary data indexer for bulk history and aggregates (trade counts, holder lists) that the base indexer does not compute.
+*   **WASM:** WebAssembly. A binary instruction format for a stack-based virtual machine, used for both contracts and the indexer.
+*   **`wasip2`:** A standardized interface for running WebAssembly modules across systems.

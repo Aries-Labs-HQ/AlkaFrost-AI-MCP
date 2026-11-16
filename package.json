@@ -1,0 +1,50 @@
+{
+  "name": "alkafrost-mcp",
+  "version": "0.2.0",
+  "description": "AlkaFrost MCP \u2014 a local, read-only stdio MCP server for building on Alkanes + SUBFROST: official docs, live chain data with your own SUBFROST API key, and contract scaffolds.",
+  "type": "module",
+  "bin": {
+    "alkafrost-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "corpus"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "ingest": "tsx scripts/ingest.ts",
+    "incidents": "tsx scripts/incidents.ts",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "minisearch": "^7.2.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^28.0.3",
+    "@types/node": "^22.19.19",
+    "@types/turndown": "^5.0.6",
+    "jsdom": "^29.1.1",
+    "tsx": "^4.22.3",
+    "turndown": "^7.2.4",
+    "typescript": "^5.9.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aries-Labs-HQ/alkanes-subfrost-public-mcp.git"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "alkanes",
+    "subfrost",
+    "bitcoin",
+    "frbtc"
+  ]
+}
