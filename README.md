@@ -39,18 +39,15 @@ hosted dependency.
 AlkaFrost talks to the SUBFROST gateway with your own key.
 
 > **[Sign up for a SUBFROST API key](https://api.subfrost.io/auth/signup?ref=82D1DE7C)** —
-> sign up through our referral link and get **50% off your first month**.
-
-It's a referral link: signing up through it also supports this project at no
-extra cost to you.
+> sign up through this link and get **50% off your first month**.
 
 ### 2. Install
 
 **Requirements:** [Node.js](https://nodejs.org) >= 20.
 
 ```bash
-git clone https://github.com/Aries-Labs-HQ/alkanes-subfrost-public-mcp.git
-cd alkanes-subfrost-public-mcp
+git clone https://github.com/Aries-Labs-HQ/AlkaFrost-AI-MCP.git
+cd AlkaFrost-AI-MCP
 npm install
 npm run build
 ```
@@ -62,7 +59,7 @@ npm run build
 ```bash
 claude mcp add --scope local --transport stdio alkafrost \
   -e SUBFROST_API_KEY=YOUR_KEY \
-  -- node /absolute/path/to/alkanes-subfrost-public-mcp/dist/index.js
+  -- node /absolute/path/to/AlkaFrost-AI-MCP/dist/index.js
 ```
 
 Verify with `claude mcp list`, then `/mcp` in a session. (`--` separates Claude's
@@ -76,7 +73,7 @@ variadic and will otherwise swallow the server name.)
   "mcpServers": {
     "alkafrost": {
       "command": "node",
-      "args": ["/absolute/path/to/alkanes-subfrost-public-mcp/dist/index.js"],
+      "args": ["/absolute/path/to/AlkaFrost-AI-MCP/dist/index.js"],
       "env": { "SUBFROST_API_KEY": "your-key-here" }
     }
   }
@@ -87,10 +84,11 @@ Your key is sent only as the `x-subfrost-api-key` header to the SUBFROST
 gateway — never in a URL, never anywhere else. You can also put it in a local
 `.env` (copy `.env.example`); `.env` is gitignored.
 
-> **Upgrading from the Aries-branded version?** Tools are now prefixed
-> `alkafrost_` instead of `aries_`, and the tutorials tool was removed with the
-> third-party tutorial docs. Pull, `npm install && npm run build`, and re-add the
-> server under its new name.
+> **Upgrading from a clone made before the AlkaFrost rename?** Tools are now
+> prefixed `alkafrost_` instead of `aries_`, and the tutorials tool was removed
+> with the third-party tutorial docs. Point your remote at the new URL
+> (`git remote set-url origin https://github.com/Aries-Labs-HQ/AlkaFrost-AI-MCP.git`),
+> pull, `npm install && npm run build`, and re-add the server under its new name.
 
 ---
 
@@ -184,7 +182,7 @@ Contributions are welcome — this project gets better the more builders use it.
 - **Docs** — fix or add corpus content from a public source.
 - **Ingest sources** — point `scripts/ingest.ts` at more official, public docs.
 - **Code & tools** — bug fixes, new read-only tools, better scaffolds.
-- **Bug reports** — [open an issue](https://github.com/Aries-Labs-HQ/alkanes-subfrost-public-mcp/issues/new/choose).
+- **Bug reports** — [open an issue](https://github.com/Aries-Labs-HQ/AlkaFrost-AI-MCP/issues/new/choose).
 
 Learned a general Alkanes/SUBFROST gotcha with your local incident log? That's
 a great PR. See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the ground rules.
@@ -194,8 +192,8 @@ a great PR. See **[CONTRIBUTING.md](CONTRIBUTING.md)** for the ground rules.
 AlkaFrost MCP is free and MIT-licensed. If it saves you time, you can support
 its upkeep:
 
-- **Sign up for SUBFROST through [our referral link](https://api.subfrost.io/auth/signup?ref=82D1DE7C)**
-  (you get 50% off your first month).
+- **Contribute** — a corpus fix, a new read-only tool, or a good bug report
+  (see [Contributing](#contributing)).
 - **Donate BTC:**
 
   ```
@@ -207,17 +205,17 @@ Thank you.
 ## Community
 
 Questions, ideas, or show-and-tell: join the
-**[Telegram group](https://t.me/+DLc96-DPNJRlZTgx)**, or open a
-[GitHub issue](https://github.com/Aries-Labs-HQ/alkanes-subfrost-public-mcp/issues).
+**[Alkane Builder Onboarding group on Telegram](https://t.me/+fgnukd96aCZjZGI5)**, or open a
+[GitHub issue](https://github.com/Aries-Labs-HQ/AlkaFrost-AI-MCP/issues).
 
 ## Links
 
 | | |
 | --- | --- |
-| SUBFROST API keys (referral, 50% off first month) | **[api.subfrost.io](https://api.subfrost.io/auth/signup?ref=82D1DE7C)** |
+| SUBFROST API keys (50% off your first month) | **[api.subfrost.io](https://api.subfrost.io/auth/signup?ref=82D1DE7C)** |
 | SUBFROST docs | **[docs.subfrost.io](https://docs.subfrost.io)** |
 | alkanes-rs | **[github.com/kungfuflex/alkanes-rs](https://github.com/kungfuflex/alkanes-rs)** |
-| Telegram group | **[t.me/+DLc96-DPNJRlZTgx](https://t.me/+DLc96-DPNJRlZTgx)** |
+| Alkane Builder Onboarding (Telegram) | **[t.me/+fgnukd96aCZjZGI5](https://t.me/+fgnukd96aCZjZGI5)** |
 | Model Context Protocol | **[modelcontextprotocol.io](https://modelcontextprotocol.io)** |
 
 ## License

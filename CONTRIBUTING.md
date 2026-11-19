@@ -62,7 +62,7 @@ When one is a **general** Alkanes/SUBFROST lesson (not specific to your project)
 
 ### Bug reports
 
-Use the [issue templates](https://github.com/Aries-Labs-HQ/alkanes-subfrost-public-mcp/issues/new/choose).
+Use the [issue templates](https://github.com/Aries-Labs-HQ/AlkaFrost-AI-MCP/issues/new/choose).
 Include your MCP client, Node version, the tool call, and the error. **Never
 paste your API key.**
 

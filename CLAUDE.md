@@ -1,4 +1,4 @@
-# CLAUDE.md — alkanes-subfrost-public-mcp (AlkaFrost MCP; repo-local, the global CLAUDE.md governs)
+# CLAUDE.md — AlkaFrost-AI-MCP (AlkaFrost MCP; repo-local, the global CLAUDE.md governs)
 
 **PUBLIC repo.** Everything here ships to strangers — code, docs, commit messages, issue text.
 
