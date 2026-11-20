@@ -10,7 +10,7 @@
 [![Node](https://img.shields.io/badge/Node-%E2%89%A520-339933.svg?logo=node.js&logoColor=white)](https://nodejs.org)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-2ea44f.svg)](CONTRIBUTING.md)
 
-**[Get a SUBFROST API key — 50% off your first month](https://api.subfrost.io/auth/signup?ref=82D1DE7C)**
+**[Get a SUBFROST API key — 50% off your first month](https://api.subfrost.io/auth/signup?ref=73084DAD)**
 
 </div>
 
@@ -38,8 +38,9 @@ hosted dependency.
 
 AlkaFrost talks to the SUBFROST gateway with your own key.
 
-> **[Sign up for a SUBFROST API key](https://api.subfrost.io/auth/signup?ref=82D1DE7C)** —
+> **[Sign up for a SUBFROST API key](https://api.subfrost.io/auth/signup?ref=73084DAD)** —
 > sign up through this link and get **50% off your first month**.
+> We earn nothing from this link. The discount is yours.
 
 ### 2. Install
 
@@ -212,7 +213,7 @@ Questions, ideas, or show-and-tell: join the
 
 | | |
 | --- | --- |
-| SUBFROST API keys (50% off your first month) | **[api.subfrost.io](https://api.subfrost.io/auth/signup?ref=82D1DE7C)** |
+| SUBFROST API keys (50% off your first month) | **[api.subfrost.io](https://api.subfrost.io/auth/signup?ref=73084DAD)** |
 | SUBFROST docs | **[docs.subfrost.io](https://docs.subfrost.io)** |
 | alkanes-rs | **[github.com/kungfuflex/alkanes-rs](https://github.com/kungfuflex/alkanes-rs)** |
 | Alkane Builder Onboarding (Telegram) | **[t.me/+fgnukd96aCZjZGI5](https://t.me/+fgnukd96aCZjZGI5)** |
