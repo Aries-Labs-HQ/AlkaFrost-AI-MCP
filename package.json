@@ -15,7 +15,8 @@
     "ingest": "tsx scripts/ingest.ts",
     "incidents": "tsx scripts/incidents.ts",
     "start": "node dist/index.js",
-    "dev": "tsx src/index.ts"
+    "dev": "tsx src/index.ts",
+    "test": "tsc && node --test tests/*.test.mjs"
   },
   "engines": {
     "node": ">=20"
