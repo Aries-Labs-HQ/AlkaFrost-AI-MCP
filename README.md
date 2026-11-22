@@ -70,8 +70,9 @@ claude mcp add --scope local --transport stdio alkafrost \
 ```
 
 Check it with `claude mcp list`, then `/mcp` inside a session. Keep
-`-e KEY=value` directly before the `--`: the flag takes several values and will
-otherwise swallow the server name.
+`-e KEY=value` after the server name and directly before the `--`: the flag
+takes several values, so a server name placed straight after it is read as one
+more value and rejected.
 
 **Cursor, Claude Desktop, or any client that takes a JSON server config**
 
@@ -88,8 +89,9 @@ otherwise swallow the server name.
 ```
 
 Your key is sent only as the `x-subfrost-api-key` header to the SUBFROST
-gateway — never in a URL, never anywhere else. You can also keep it in a local
-`.env` (copy `.env.example`); `.env` is gitignored.
+gateway — never in a URL, never anywhere else. The server reads it from its
+environment, so set it in your client's config as above; it does not load a
+`.env` file. `.env.example` lists every variable it reads.
 
 ### 4. Ask something
 
@@ -206,7 +208,8 @@ index is built from `corpus/` at startup.
 The corpus is generated from **public, official sources only**:
 
 - **[docs.subfrost.io](https://docs.subfrost.io)** — every page listed in the
-  site's `llms.txt` and sitemap, taken from its published markdown.
+  site's `llms.txt` and sitemap, taken from its published markdown (converted
+  from the page's HTML where it has none).
 - **[alkanes-rs](https://github.com/kungfuflex/alkanes-rs)** — the README and the
   `alkanes-std-orbital` reference contract.
 - **`corpus/reference/`** — short hand-written references (constants, Orbitals,
