@@ -104,36 +104,75 @@ export function hasApiKey(): boolean {
 }
 
 /**
- * Passthrough guard. The namespaced passthrough tools (esplora/ord/btc/
- * metashrew) let the model reach a lot of the gateway, so we allowlist the
- * method PREFIXES we intend to permit. This is a read-only analytics server:
- * we never want a passthrough to reach a wallet/broadcast/admin method.
+ * Passthrough guard for alkafrost_rpc, the only tool that lets the caller pick
+ * the gateway method. This is a read-only server: no caller-chosen name may
+ * reach a write, broadcast, wallet, admin or code-running method.
+ *
+ * Checks, in order:
+ *  1. the name has the shape the documented methods use: a lowercase
+ *     namespace, `_`, then ASCII letters/digits joined by single `_`, `-` or
+ *     `::` (so no whitespace, no trailing separator, no look-alike letters);
+ *  2. a denylist, compared case-insensitively;
+ *  3. an allowlist of namespaces and exact methods
+ *     (corpus/subfrost/api-reference/json-rpc/*);
+ *  4. for metashrew_view, the view name gets the same treatment, and the
+ *     simulate views that run a caller-supplied transaction or block are refused.
  */
-const ALLOWED_PREFIXES = [
-  "esplora_",
-  "ord_",
-  "metashrew_",
-  "btc_get", // read-only Bitcoin Core getters only (getblock, getrawtransaction, …)
-  "btc_decode",
-  "alkanes_",
-  "brc20_",
-];
+const METHOD_SHAPE = /^[a-z][a-z0-9]*_[A-Za-z0-9]+(?:(?:_|-|::)[A-Za-z0-9]+)*$/;
+const VIEW_SHAPE = /^[A-Za-z0-9]+(?:[_-][A-Za-z0-9]+)*$/;
 
-// Explicit denylist beats prefix match — keep spend/relay/control off-limits.
-const DENIED = [
-  "btc_sendrawtransaction",
-  "btc_send",
-  "esplora_broadcast",
-];
+const ALLOWED_PREFIXES = ["esplora_", "ord_", "alkanes_", "brc20_", "btc_decode"];
 
-export function assertAllowed(method: string): void {
-  if (DENIED.includes(method)) {
-    throw new Error(`Method "${method}" is blocked (write/broadcast).`);
+const ALLOWED_EXACT = new Set([
+  "metashrew_height",
+  "metashrew_view",
+  // Documented read-only Bitcoin Core getters. Not a "btc_get" prefix: Bitcoin
+  // Core has wallet calls that start with "get" and change wallet state.
+  "btc_getblockcount",
+  "btc_getblockhash",
+  "btc_getbestblockhash",
+  "btc_getblock",
+  "btc_getblockheader",
+  "btc_getblockchaininfo",
+  "btc_getdifficulty",
+  "btc_getrawtransaction",
+  "btc_getmempoolinfo",
+  "btc_getrawmempool",
+]);
+
+// Explicit denylist beats everything — keep spend/relay/control off-limits.
+const DENIED = new Set(["btc_sendrawtransaction", "btc_send", "esplora_broadcast"]);
+const DENIED_WORDS = /send|broadcast|post|push|submit|relay|sign|wallet|import|dump|private|key/i;
+
+// metashrew_view views that run a caller-supplied transaction or block.
+const DENIED_VIEWS = /^simulate.+/i;
+
+export function assertAllowed(method: unknown, params: unknown[] = []): void {
+  if (typeof method !== "string" || !METHOD_SHAPE.test(method)) {
+    throw new Error(
+      `Method ${JSON.stringify(method)} is not a valid gateway method name.`,
+    );
   }
-  if (!ALLOWED_PREFIXES.some((p) => method.startsWith(p))) {
+  if (DENIED.has(method.toLowerCase()) || DENIED_WORDS.test(method)) {
+    throw new Error(`Method "${method}" is blocked (write/broadcast/key).`);
+  }
+  if (!ALLOWED_EXACT.has(method) && !ALLOWED_PREFIXES.some((p) => method.startsWith(p))) {
     throw new Error(
       `Method "${method}" is not on the read-only allowlist. ` +
-        `Allowed prefixes: ${ALLOWED_PREFIXES.join(", ")}.`,
+        `Allowed: ${ALLOWED_PREFIXES.map((p) => p + "*").join(", ")}, ` +
+        `metashrew_height, metashrew_view, and the documented btc_get* reads.`,
     );
+  }
+  if (method === "metashrew_view") {
+    const view = Array.isArray(params) ? params[0] : undefined;
+    if (typeof view !== "string" || !VIEW_SHAPE.test(view)) {
+      throw new Error(`metashrew_view needs a valid view name as its first parameter.`);
+    }
+    if (DENIED_VIEWS.test(view)) {
+      throw new Error(
+        `View "${view}" runs a caller-supplied transaction or block and is blocked; ` +
+          `use alkafrost_simulate for read-only view calls.`,
+      );
+    }
   }
 }

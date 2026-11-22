@@ -449,7 +449,7 @@ export function registerChainTools(server: McpServer): void {
     "alkafrost_rpc",
     {
       description:
-        "Escape hatch: call any read-only SUBFROST gateway method directly (esplora_*, ord_*, metashrew_*, alkanes_*, brc20_*, and read-only btc_get*/btc_decode*). Write/broadcast methods are blocked. Use the docs tools (subfrost/api-reference/json-rpc/*) to find method names and params.",
+        "Escape hatch: call a read-only SUBFROST gateway method directly (esplora_*, ord_*, alkanes_*, brc20_*, metashrew_height, metashrew_view, the documented read-only btc_get* methods, and btc_decode*). Write, broadcast, wallet and script methods are blocked, as are the metashrew_view simulate views that run a caller-supplied transaction or block. Use the docs tools (subfrost/api-reference/json-rpc/*) to find method names and params.",
       inputSchema: {
         method: z.string().describe("Full JSON-RPC method, e.g. esplora_address::txs"),
         params: z.array(z.any()).optional(),
@@ -457,7 +457,7 @@ export function registerChainTools(server: McpServer): void {
     },
     async ({ method, params }) => {
       try {
-        assertAllowed(method);
+        assertAllowed(method, params ?? []);
         return ok(await rpc(method, params ?? []));
       } catch (e) {
         return fail(String(e));
