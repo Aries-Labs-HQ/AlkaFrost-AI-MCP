@@ -50,8 +50,16 @@ export interface Incident extends IncidentInput {
   ts: number; // unix ms
 }
 
-const SECRET_KV =
-  /\b([A-Za-z0-9_]*(?:API[_-]?KEY|SECRET|TOKEN|PASSWORD|PASSWD|SEED|MNEMONIC|PRIV(?:ATE)?[_-]?KEY)[A-Za-z0-9_]*)\s*[:=]\s*["']?[^\s"',]+["']?/gi;
+// A credential-looking name, optionally quoted (JSON), then `:` or `=`, then a value.
+const SECRET_NAME = String.raw`[A-Za-z0-9_]*(?:API[_-]?KEY|SECRET|TOKEN|PASSWORD|PASSWD|PRIV(?:ATE)?[_-]?KEY)[A-Za-z0-9_]*`;
+const SECRET_KV = new RegExp(String.raw`\b(${SECRET_NAME})(["']?\s*[:=]\s*)["']?[^\s"',]+["']?`, "gi");
+// Seed phrases are several words: redact the rest of the line after the label.
+const SEED_KV = /\b([A-Za-z0-9_]*(?:SEED|MNEMONIC)[A-Za-z0-9_]*)(["']?\s*[:=]\s*)[^\n]+/gi;
+const PEM_PRIVATE = /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g;
+// BIP-32 / SLIP-132 extended keys (xprv, yprv, zprv, tprv, vprv, … and their pubs).
+const EXTENDED_KEY = /\b[xyzuvtXYZUV](?:prv|pub)[1-9A-HJ-NP-Za-km-z]{20,}\b/g;
+// WIF private keys: base58, 51 or 52 characters, mainnet 5/K/L, testnet 9/c.
+const WIF = /\b[5KLc9][1-9A-HJ-NP-Za-km-z]{50,51}\b/g;
 const USER_PATH = /([A-Za-z]:\\Users\\|\/Users\/|\/home\/|\/root\/)[^\s"':,;)]+/g;
 
 /** Best-effort scrub of credentials / local paths before storage. */
@@ -59,16 +67,29 @@ export function sanitize(text: string): string {
   let t = text;
   const key = process.env.SUBFROST_API_KEY;
   if (key && key.length >= 8) t = t.split(key).join("<SUBFROST_API_KEY>");
-  t = t.replace(SECRET_KV, "$1=<REDACTED>");
+  t = t.replace(PEM_PRIVATE, "<KEY_REDACTED>");
+  t = t.replace(SEED_KV, "$1$2<REDACTED>");
+  t = t.replace(SECRET_KV, "$1$2<REDACTED>");
   t = t.replace(/(x-subfrost-api-key\s*:\s*)\S+/gi, "$1<REDACTED>");
-  t = t.replace(/\b(?:xprv|xpub|tprv|tpub)[A-Za-z0-9]{20,}\b/g, "<KEY_REDACTED>");
+  t = t.replace(/(authorization\s*:\s*)[^\n]+/gi, "$1<REDACTED>");
+  t = t.replace(/\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]{8,}/g, "$1 <REDACTED>");
+  t = t.replace(EXTENDED_KEY, "<KEY_REDACTED>");
+  t = t.replace(WIF, "<KEY_REDACTED>");
   t = t.replace(USER_PATH, "$1<USER_PATH>");
   t = t.replace(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g, "<IP>");
   return t;
 }
 
+/** Longest stored field, so a report cannot grow the local log without bound. */
+export const MAX_FIELD_CHARS = 10_000;
+
+function clean(text: string): string {
+  const t = sanitize(text);
+  return t.length > MAX_FIELD_CHARS ? t.slice(0, MAX_FIELD_CHARS) + " …[truncated]" : t;
+}
+
 function sanitizeOpt(text?: string): string | undefined {
-  return text === undefined || text === "" ? text : sanitize(text);
+  return text === undefined || text === "" ? text : clean(text);
 }
 
 function loadFile(path: string): Incident[] {
@@ -116,10 +137,10 @@ export function report(input: IncidentInput): Incident {
     ts,
     severity: input.severity,
     category: input.category,
-    title: sanitize(input.title),
-    description: sanitize(input.description),
-    root_cause: sanitize(input.root_cause),
-    correction: sanitize(input.correction),
+    title: clean(input.title),
+    description: clean(input.description),
+    root_cause: clean(input.root_cause),
+    correction: clean(input.correction),
     rules_violated: sanitizeOpt(input.rules_violated),
     affected_files: sanitizeOpt(input.affected_files),
     bad_code: sanitizeOpt(input.bad_code),
