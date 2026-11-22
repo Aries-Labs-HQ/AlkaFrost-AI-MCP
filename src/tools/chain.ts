@@ -25,6 +25,17 @@ interface SimResult {
   execution?: { data?: string; error?: string | null };
   status?: number;
   gasUsed?: number;
+  /** Set by settle() when the call itself failed (no answer from the gateway). */
+  failed?: string;
+}
+
+/** Turn a failed view call into a result, so one missing field doesn't sink the rest. */
+const settle = (p: Promise<SimResult>): Promise<SimResult> =>
+  p.catch((e): SimResult => ({ execution: { data: "0x", error: String(e) }, failed: String(e) }));
+
+/** If not one view call got an answer, report the failure instead of empty fields. */
+function throwIfAllFailed(results: SimResult[]): void {
+  if (results.length > 0 && results.every((r) => r.failed)) throw new Error(results[0].failed);
 }
 
 /** Invoke a contract opcode as a read-only view via alkanes_simulate.
@@ -117,15 +128,14 @@ async function readToken(
   id: { block: number; tx: number },
   blockTag = "latest",
 ): Promise<TokenMeta> {
-  const safe = (p: Promise<SimResult>) =>
-    p.catch((e): SimResult => ({ execution: { data: "0x", error: String(e) } }));
   const [n, s, d, s101, s105] = await Promise.all([
-    safe(simulateOpcode(id, 99, [], blockTag)),
-    safe(simulateOpcode(id, 100, [], blockTag)),
-    safe(simulateOpcode(id, 102, [], blockTag)),
-    safe(simulateOpcode(id, 101, [], blockTag)),
-    safe(simulateOpcode(id, 105, [], blockTag)),
+    settle(simulateOpcode(id, 99, [], blockTag)),
+    settle(simulateOpcode(id, 100, [], blockTag)),
+    settle(simulateOpcode(id, 102, [], blockTag)),
+    settle(simulateOpcode(id, 101, [], blockTag)),
+    settle(simulateOpcode(id, 105, [], blockTag)),
   ]);
+  throwIfAllFailed([n, s, d, s101, s105]);
   const sup105 = hexToU128(s105.execution?.data);
   const sup101 = hexToU128(s101.execution?.data);
   const supplyOpcode = sup105 !== "0" ? 105 : sup101 !== "0" ? 101 : null;
@@ -256,16 +266,15 @@ export function registerChainTools(server: McpServer): void {
       // frBTC's standard `alkanes_meta` view panics, so read each field via an
       // opcode view: 99 = name, 100 = symbol, 102 = decimals, 105 = total
       // supply, 103 = get-signer. (verified live)
-      const safe = (p: Promise<SimResult>) =>
-        p.catch((e): SimResult => ({ execution: { data: "0x", error: String(e) } }));
       try {
         const [nameR, symbolR, decimalsR, supplyR, signerR] = await Promise.all([
-          safe(simulateOpcode(FRBTC, 99)),
-          safe(simulateOpcode(FRBTC, 100)),
-          safe(simulateOpcode(FRBTC, 102)),
-          safe(simulateOpcode(FRBTC, 105)),
-          safe(simulateOpcode(FRBTC, 103)),
+          settle(simulateOpcode(FRBTC, 99)),
+          settle(simulateOpcode(FRBTC, 100)),
+          settle(simulateOpcode(FRBTC, 102)),
+          settle(simulateOpcode(FRBTC, 105)),
+          settle(simulateOpcode(FRBTC, 103)),
         ]);
+        throwIfAllFailed([nameR, symbolR, decimalsR, supplyR, signerR]);
         return ok({
           contract: "32:0",
           name: hexToUtf8(nameR.execution?.data),
@@ -449,7 +458,7 @@ export function registerChainTools(server: McpServer): void {
     "alkafrost_rpc",
     {
       description:
-        "Escape hatch: call any read-only SUBFROST gateway method directly (esplora_*, ord_*, metashrew_*, alkanes_*, brc20_*, and read-only btc_get*/btc_decode*). Write/broadcast methods are blocked. Use the docs tools (subfrost/api-reference/json-rpc/*) to find method names and params.",
+        "Escape hatch: call a read-only SUBFROST gateway method directly (esplora_*, ord_*, alkanes_*, brc20_*, metashrew_height, metashrew_view, the documented read-only btc_get* methods, and btc_decode*). Write, broadcast, wallet and script methods are blocked, as are the metashrew_view simulate views that run a caller-supplied transaction or block. Use the docs tools (subfrost/api-reference/json-rpc/*) to find method names and params.",
       inputSchema: {
         method: z.string().describe("Full JSON-RPC method, e.g. esplora_address::txs"),
         params: z.array(z.any()).optional(),
@@ -457,7 +466,7 @@ export function registerChainTools(server: McpServer): void {
     },
     async ({ method, params }) => {
       try {
-        assertAllowed(method);
+        assertAllowed(method, params ?? []);
         return ok(await rpc(method, params ?? []));
       } catch (e) {
         return fail(String(e));

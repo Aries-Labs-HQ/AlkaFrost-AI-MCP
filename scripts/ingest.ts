@@ -32,7 +32,7 @@ import TurndownService from "turndown";
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const CORPUS = join(ROOT, "corpus");
 const UA =
-  "Mozilla/5.0 (compatible; AlkaFrostMCP-ingest/1.0; +https://github.com/Aries-Labs-HQ/alkanes-subfrost-public-mcp)";
+  "Mozilla/5.0 (compatible; AlkaFrostMCP-ingest/1.0; +https://github.com/Aries-Labs-HQ/AlkaFrost-AI-MCP)";
 const MIN_CHARS = 200; // skip near-empty extractions (e.g. JS-rendered SPA shells)
 
 const SUBFROST_DOCS = "https://docs.subfrost.io";

@@ -8,12 +8,13 @@ Issues and pull requests are both welcome.
 These keep the project trustworthy and easy to run. PRs that break them can't be
 merged, however good the rest of the change is.
 
-1. **Public sources only.** Every corpus doc must come from a public, linkable
-   source and carry it as `source_url` in its frontmatter. No private notes,
-   paywalled or licensed material, or anything you don't have the right to
-   publish under MIT.
-2. **Read-only, always.** No tool may sign, broadcast, spend, or handle wallet
-   keys. New RPC methods go through the read-only allowlist in `src/rpc.ts`.
+1. **Public, official sources only.** Every corpus doc must come from a public,
+   official, linkable source and carry it as `source_url` in its frontmatter.
+   No private notes, paywalled or licensed material, or anything you don't have
+   the right to publish under MIT.
+2. **Read-only, always.** No tool may sign, broadcast, spend, or handle keys.
+   New RPC methods go through the read-only allowlist in `src/rpc.ts`, with a
+   test in `tests/guard.test.mjs`.
 3. **Bring-your-own-key works, standalone.** A fresh clone plus the user's own
    SUBFROST API key must be all it takes. No hosted services, accounts, or
    telemetry.
@@ -45,7 +46,8 @@ merged, however good the rest of the change is.
 
 ### Lessons from your incident log
 
-`alkafrost_incident_report` saves gotchas to your local `data/incidents.jsonl`.
+`alkafrost_incident_report` saves gotchas to your local incident log
+(`data/incidents.jsonl`, or the path in `ALKAFROST_INCIDENTS_PATH`).
 When one is a **general** Alkanes/SUBFROST lesson (not specific to your project):
 
 1. `npm run incidents` to list them, then `npm run incidents -- show <id>`.
@@ -62,7 +64,7 @@ When one is a **general** Alkanes/SUBFROST lesson (not specific to your project)
 
 ### Bug reports
 
-Use the [issue templates](https://github.com/Aries-Labs-HQ/alkanes-subfrost-public-mcp/issues/new/choose).
+Use the [issue templates](https://github.com/Aries-Labs-HQ/AlkaFrost-AI-MCP/issues/new/choose).
 Include your MCP client, Node version, the tool call, and the error. **Never
 paste your API key.**
 
@@ -70,20 +72,29 @@ paste your API key.**
 
 ```bash
 npm install
-npm run build        # compile to dist/
-npm run dev          # run from source with tsx
-npm run ingest       # refresh the corpus from official sources
+npm run build          # compile to dist/
+npm test               # build, then run the tests (no network, no API key)
+npm run check:public   # scan the repo for credentials, IP addresses and home paths
+npm run dev            # run from source with tsx
+npm run ingest         # refresh the corpus from official sources
 ```
 
-Before opening a PR, make sure `npm run build` passes and the server starts
-(`SUBFROST_API_KEY=... node dist/index.js` should log `ready (stdio)` to stderr).
+Before opening a PR, make sure `npm test` and `npm run check:public` pass. The
+same checks run in CI on Node 20 and 22. If you change a tool's name or add one,
+update the README's tool tables too: a test compares them with the server.
 
 ## Pull requests
 
+- Every change lands through a pull request that passes CI and is reviewed
+  by the maintainer. Nothing is pushed straight to `main`.
 - One focused change per PR, with a short description of what and why.
 - Conventional commit style: `type(scope): summary`, lowercase type, e.g.
   `fix(chain): handle empty pool list` or `docs(corpus): add orbital media note`.
-- Maintainers review every PR; please be patient.
+
+## Security issues
+
+Please don't open a public issue for a vulnerability. See
+[SECURITY.md](SECURITY.md).
 
 By contributing, you agree that your contribution is licensed under the MIT
 license of this project.

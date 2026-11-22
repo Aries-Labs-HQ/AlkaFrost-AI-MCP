@@ -1,5 +1,8 @@
 blank_issues_enabled: true
 contact_links:
   - name: Questions and discussion (Telegram)
-    url: https://t.me/+DLc96-DPNJRlZTgx
+    url: https://t.me/+fgnukd96aCZjZGI5
     about: Ask questions and share what you're building.
+  - name: Report a security vulnerability
+    url: https://github.com/Aries-Labs-HQ/AlkaFrost-AI-MCP/blob/main/SECURITY.md
+    about: Please don't open a public issue. SECURITY.md says how to report privately.
