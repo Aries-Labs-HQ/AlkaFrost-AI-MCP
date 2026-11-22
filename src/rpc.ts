@@ -8,6 +8,27 @@ const API_KEY = process.env.SUBFROST_API_KEY;
 
 let counter = 0;
 
+/** Remove the configured key from any text that came back from upstream. */
+export function redactKey(text: string): string {
+  return API_KEY ? text.split(API_KEY).join("<SUBFROST_API_KEY>") : text;
+}
+
+const NO_KEY_HINT = " (SUBFROST_API_KEY is not set: the chain-data tools need your own key.)";
+
+class UpstreamError extends Error {}
+
+/** Normalise an upstream failure: key redacted, and a hint when no key is set. */
+function upstreamError(message: string): UpstreamError {
+  return new UpstreamError(redactKey(message) + (API_KEY ? "" : NO_KEY_HINT));
+}
+
+/** Wrap anything else (network errors, bad JSON) the same way, keeping the cause. */
+function asUpstreamError(err: unknown): UpstreamError {
+  if (err instanceof UpstreamError) return err;
+  const cause = err instanceof Error && err.cause instanceof Error ? ` (${err.cause.message})` : "";
+  return upstreamError(String(err) + cause);
+}
+
 export interface RpcError {
   code: number;
   message: string;
@@ -35,27 +56,28 @@ export async function rpc<T = unknown>(
       },
       body: JSON.stringify({ jsonrpc: "2.0", method, params, id: ++counter }),
       signal: controller.signal,
+      // Never follow a redirect: fetch would re-send the key header to the new origin.
+      redirect: "error",
     });
     if (!res.ok) {
       const body = await res.text().catch(() => "");
-      throw new Error(`Subfrost RPC HTTP ${res.status}: ${body.slice(0, 500)}`);
+      throw upstreamError(`Subfrost RPC HTTP ${res.status}: ${body.slice(0, 500)}`);
     }
     const json = (await res.json()) as {
       result?: T;
       error?: RpcError;
     };
     if (json.error) {
-      throw new Error(
-        `Subfrost RPC error ${json.error.code}: ${json.error.message}`,
-      );
+      throw upstreamError(`Subfrost RPC error ${json.error.code}: ${json.error.message}`);
     }
     return json.result as T;
   } catch (err) {
     if (err instanceof Error && err.name === "AbortError") {
-      throw new Error(`Subfrost RPC timeout after ${timeoutMs}ms (${method})`);
+      throw upstreamError(`Subfrost RPC timeout after ${timeoutMs}ms (${method})`);
     }
-    log("rpc failed", method, String(err));
-    throw err;
+    const e = asUpstreamError(err);
+    log("rpc failed", method, e.message);
+    throw e;
   } finally {
     clearTimeout(timer);
   }
@@ -81,19 +103,22 @@ export async function restPost<T = unknown>(
       },
       body: JSON.stringify(body),
       signal: controller.signal,
+      // Never follow a redirect: fetch would re-send the key header to the new origin.
+      redirect: "error",
     });
     if (!res.ok) {
       const t = await res.text().catch(() => "");
-      throw new Error(`Subfrost REST HTTP ${res.status}: ${t.slice(0, 300)}`);
+      throw upstreamError(`Subfrost REST HTTP ${res.status}: ${t.slice(0, 300)}`);
     }
     const json = (await res.json()) as { data?: T };
     return (json.data ?? json) as T;
   } catch (err) {
     if (err instanceof Error && err.name === "AbortError") {
-      throw new Error(`Subfrost REST timeout after ${timeoutMs}ms (${path})`);
+      throw upstreamError(`Subfrost REST timeout after ${timeoutMs}ms (${path})`);
     }
-    log("rest failed", path, String(err));
-    throw err;
+    const e = asUpstreamError(err);
+    log("rest failed", path, e.message);
+    throw e;
   } finally {
     clearTimeout(timer);
   }
