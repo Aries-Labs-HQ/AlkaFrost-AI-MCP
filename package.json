@@ -41,6 +41,10 @@
     "type": "git",
     "url": "git+https://github.com/Aries-Labs-HQ/AlkaFrost-AI-MCP.git"
   },
+  "homepage": "https://github.com/Aries-Labs-HQ/AlkaFrost-AI-MCP#readme",
+  "bugs": {
+    "url": "https://github.com/Aries-Labs-HQ/AlkaFrost-AI-MCP/issues"
+  },
   "keywords": [
     "mcp",
     "model-context-protocol",
