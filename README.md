@@ -48,7 +48,7 @@ for the live chain tools. The docs and dev tools work without a key.
 AlkaFrost talks to the SUBFROST gateway with your own key.
 
 > **[Sign up for a SUBFROST API key](https://api.subfrost.io/auth/signup?ref=73084DAD)** —
-> this link carries a first-month discount. We earn nothing from it.
+> this link gives you 50% off your first month. We earn nothing from it.
 
 ### 2. Install
 
@@ -267,7 +267,7 @@ or open a [GitHub issue](https://github.com/Aries-Labs-HQ/AlkaFrost-AI-MCP/issue
 
 | | |
 | --- | --- |
-| SUBFROST API keys | [api.subfrost.io](https://api.subfrost.io/auth/signup?ref=73084DAD) — first-month discount; we earn nothing from it |
+| SUBFROST API keys | [api.subfrost.io](https://api.subfrost.io/auth/signup?ref=73084DAD) — 50% off your first month; we earn nothing from it |
 | SUBFROST docs | [docs.subfrost.io](https://docs.subfrost.io) |
 | alkanes-rs | [github.com/kungfuflex/alkanes-rs](https://github.com/kungfuflex/alkanes-rs) |
 | Builder kit | [alkanes.dev](https://alkanes.dev) |
